@@ -1205,19 +1205,36 @@ function applyAdminSettings(){
   if(d.restSub)   document.querySelectorAll('[data-key="rs"]').forEach(el=>el.textContent=d.restSub);
 
   // Logos
+  // Logoları ayrı key'den de oku (daha güvenilir)
+  const homesLogoSrc = localStorage.getItem('kk_logo_homes') || d.homesLogo;
+  const restLogoSrc  = localStorage.getItem('kk_logo_rest')  || d.restLogo;
+  if(homesLogoSrc && !d.homesLogo) d.homesLogo = homesLogoSrc;
+  if(restLogoSrc  && !d.restLogo)  d.restLogo  = restLogoSrc;
   if(d.homesLogo){
     // Nav logo
     const navImg=document.getElementById('homes-logo-nav');
-    if(navImg){navImg.src=d.homesLogo;navImg.style.display='block';}
+    if(navImg){
+      navImg.onload=()=>{navImg.style.display='block';};
+      navImg.onerror=()=>{navImg.style.display='none';};
+      navImg.src=d.homesLogo;
+      if(navImg.complete&&navImg.naturalWidth>0)navImg.style.display='block';
+    }
     document.querySelectorAll('.nav-logo-img .lp').forEach(el=>el.style.display='none');
     // Hero logo
     const heroImg=document.getElementById('homes-logo-hero');
-    if(heroImg){heroImg.src=d.homesLogo;heroImg.style.display='block';}
+    if(heroImg){
+      heroImg.onload=()=>{heroImg.style.display='block';};
+      heroImg.src=d.homesLogo;}
     document.querySelectorAll('.logo-circle .logo-icon,.logo-circle .logo-txt').forEach(el=>el.style.display='none');
   }
   if(d.restLogo){
     const restImg=document.getElementById('rest-logo-hero');
-    if(restImg){restImg.src=d.restLogo;restImg.style.display='block';}
+    if(restImg){
+      restImg.onload=()=>{restImg.style.display='block';};
+      restImg.onerror=()=>{restImg.style.display='none';};
+      restImg.src=d.restLogo;
+      if(restImg.complete&&restImg.naturalWidth>0)restImg.style.display='block';
+    }
     document.querySelectorAll('.rest-logo-circle .logo-icon,.rest-logo-circle .logo-txt').forEach(el=>el.style.display='none');
   }
 
@@ -2181,10 +2198,27 @@ function uploadLogo(type){
       if(ph)ph.style.display='none';
       // save
       const d=getData();
-      if(type==='homes')d.homesLogo=ev.target.result;
-      else d.restLogo=ev.target.result;
+      if(type==='homes'){
+        d.homesLogo=ev.target.result;
+        localStorage.setItem('kk_logo_homes',ev.target.result);
+      } else {
+        d.restLogo=ev.target.result;
+        localStorage.setItem('kk_logo_rest',ev.target.result);
+      }
       localStorage.setItem('kk_settings',JSON.stringify(d));
       flashSave();
+      // Misafir sayfası img'lerini de hemen güncelle
+      if(type==='homes'){
+        ['homes-logo-nav','homes-logo-hero'].forEach(id=>{
+          const el=document.getElementById(id);
+          if(el){el.src=ev.target.result;el.style.display='block';}
+        });
+        document.querySelectorAll('.nav-logo-img .lp,.logo-circle .logo-icon,.logo-circle .logo-txt').forEach(el=>el.style.display='none');
+      } else {
+        const el=document.getElementById('rest-logo-hero');
+        if(el){el.src=ev.target.result;el.style.display='block';}
+        document.querySelectorAll('.rest-logo-circle .logo-icon,.rest-logo-circle .logo-txt').forEach(el=>el.style.display='none');
+      }
     };
     r.readAsDataURL(f);
   };
@@ -2196,8 +2230,19 @@ function clearLogo(type){
   if(img){img.src='';img.style.display='none';}
   if(ph)ph.style.display='';
   const d=getData();
-  if(type==='homes')delete d.homesLogo;
-  else delete d.restLogo;
+  if(type==='homes'){
+    delete d.homesLogo;
+    localStorage.removeItem('kk_logo_homes');
+    ['homes-logo-nav','homes-logo-hero'].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el){el.src='';el.style.display='none';}
+    });
+  } else {
+    delete d.restLogo;
+    localStorage.removeItem('kk_logo_rest');
+    const el=document.getElementById('rest-logo-hero');
+    if(el){el.src='';el.style.display='none';}
+  }
   localStorage.setItem('kk_settings',JSON.stringify(d));
 }
 function loadLogos(d){
