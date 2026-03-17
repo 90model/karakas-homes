@@ -2457,6 +2457,7 @@ window.adm_addAirport=addAirport;window.adm_addPhotoSlot=addPhotoSlot;
 window.adm_uploadLogo=uploadLogo;window.adm_clearLogo=clearLogo;
 window.adm_uploadPersonAdminPhoto=uploadPersonAdminPhoto;
 window.adm_clearPersonPhoto=clearPersonPhoto;window.adm_initAll=initAll;
+window.adm_uploadPhoto=uploadPhoto;window.adm_clearPhoto=clearPhoto;
 })();
 function startAdminHold(e){if(e)e.preventDefault();document.getElementById('admin-hold-bar').style.display='block';window._aHold=setTimeout(()=>{document.getElementById('admin-hold-bar').style.display='none';openAdmin();},1500);}
 function cancelAdminHold(){clearTimeout(window._aHold);document.getElementById('admin-hold-bar').style.display='none';}
