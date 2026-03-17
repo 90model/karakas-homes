@@ -1299,10 +1299,12 @@ function applyAd(elId,adData){
       if(d.about['p'+n+'_bio']){const el=document.getElementById('person-bio-'+n);if(el)el.textContent=d.about['p'+n+'_bio'];}
       if(d.about['p'+n+'_ig']){const el=document.getElementById('person-ig-'+n);if(el){el.href=d.about['p'+n+'_ig'];el.style.display='inline-flex';}}
       if(d.about['p'+n+'_wa']){const el=document.getElementById('person-wa-'+n);if(el){el.href='https://wa.me/'+d.about['p'+n+'_wa'].replace(/\D/g,'');el.style.display='inline-flex';}}
-      if(d['personPhoto'+n]){
+      // Ayrı key varsa öncelikli kullan
+      const photoSrc=localStorage.getItem('kk_photo_p'+n)||d['personPhoto'+n];
+      if(photoSrc){
         const img=document.getElementById('person-img-'+n);
         const ph=document.getElementById('person-ph-'+n);
-        if(img){img.src=d['personPhoto'+n];img.style.display='block';}
+        if(img){img.src=photoSrc;img.style.display='block';}
         if(ph)ph.style.display='none';
       }
     });
@@ -2163,11 +2165,21 @@ function uploadPhoto(i){
     const f=e.target.files[0];if(!f)return;
     const r=new FileReader();
     r.onload=ev=>{
-      photoData[i]=ev.target.result;
+      const src=ev.target.result;
+      photoData[i]=src;
+      // Admin önizleme
       const img=document.getElementById(`pimg-${i}`);
-      if(img){img.src=ev.target.result;img.style.display='block';}
+      if(img){img.src=src;img.style.display='block';}
       const slot=document.getElementById(`pslot-${i}`);
       if(slot){const ph=slot.querySelector('div');if(ph)ph.style.display='none';}
+      // Misafir galerisi - ANINDA güncelle
+      const gImg=document.getElementById('gimg-'+i);
+      if(gImg){
+        gImg.src=src;
+        gImg.style.display='block';
+        const gPh=gImg.parentElement&&gImg.parentElement.querySelector('.slide-placeholder');
+        if(gPh)gPh.style.display='none';
+      }
     };
     r.readAsDataURL(f);
   };
@@ -2175,10 +2187,16 @@ function uploadPhoto(i){
 }
 function clearPhoto(i){
   delete photoData[i];
+  // Admin önizleme temizle
   const img=document.getElementById(`pimg-${i}`);
   if(img){img.src='';img.style.display='none';}
   const slot=document.getElementById(`pslot-${i}`);
   if(slot){const ph=slot.querySelector('div');if(ph)ph.style.display='';}
+  // Misafir galerisi temizle
+  const gImg=document.getElementById('gimg-'+i);
+  if(gImg){gImg.src='';gImg.style.display='none';}
+  const gSlide=gImg&&gImg.parentElement;
+  if(gSlide){const gPh=gSlide.querySelector('.slide-placeholder');if(gPh)gPh.style.display='';}
 }
 
 /* ══ LOGOS ══ */
@@ -2297,6 +2315,8 @@ function saveAll(){
   localStorage.setItem('kk_settings',JSON.stringify(d));
   localStorage.setItem('kk_menu',JSON.stringify(d.menu));
   flashSave();
+  // Kaydet sonrası misafir sayfasını anında güncelle
+  if(typeof applyAdminSettings==='function') applyAdminSettings();
 }
 
 function loadAll(){
@@ -2355,13 +2375,22 @@ function uploadPersonAdminPhoto(num){
     const f=e.target.files[0];if(!f)return;
     const r=new FileReader();
     r.onload=ev=>{
+      const src=ev.target.result;
+      // Admin önizleme
       const img=document.getElementById('p'+num+'-photo-img');
       const ph=document.getElementById('p'+num+'-photo-ph');
-      if(img){img.src=ev.target.result;img.style.display='block';}
+      if(img){img.src=src;img.style.display='block';}
       if(ph)ph.style.display='none';
+      // localStorage - ayrı key VE settings
       const d=getData();
-      d['personPhoto'+num]=ev.target.result;
+      d['personPhoto'+num]=src;
+      localStorage.setItem('kk_photo_p'+num, src);
       localStorage.setItem('kk_settings',JSON.stringify(d));
+      // Misafir sayfası - ANINDA güncelle
+      const guestImg=document.getElementById('person-img-'+num);
+      const guestPh=document.getElementById('person-ph-'+num);
+      if(guestImg){guestImg.src=src;guestImg.style.display='block';}
+      if(guestPh)guestPh.style.display='none';
       flashSave();
     };
     r.readAsDataURL(f);
@@ -2369,10 +2398,18 @@ function uploadPersonAdminPhoto(num){
   inp.click();
 }
 function clearPersonPhoto(num){
+  // Admin önizleme temizle
   const img=document.getElementById('p'+num+'-photo-img');
   const ph=document.getElementById('p'+num+'-photo-ph');
   if(img){img.src='';img.style.display='none';}
   if(ph)ph.style.display='';
+  // Misafir sayfasını da temizle
+  const guestImg=document.getElementById('person-img-'+num);
+  const guestPh=document.getElementById('person-ph-'+num);
+  if(guestImg){guestImg.src='';guestImg.style.display='none';}
+  if(guestPh)guestPh.style.display='';
+  // localStorage temizle
+  localStorage.removeItem('kk_photo_p'+num);
   const d=getData();
   delete d['personPhoto'+num];
   localStorage.setItem('kk_settings',JSON.stringify(d));
@@ -2405,4 +2442,28 @@ function collectValues(){
   }));
 }
 
-document.getElementById('pw-input').addEventListener('keydown',e=>{if(e.key==
+document.getElementById('pw-input').addEventListener('keydown',e=>{if(e.key==='Enter')adm_doLogin();});
+
+window.adm_doLogin=doLogin;window.adm_doLogout=doLogout;window.adm_saveAll=saveAll;
+window.adm_changePassword=changePassword;window.adm_resetAll=resetAll;
+window.adm_setTab=function(t,btn){
+  document.querySelectorAll('#admin-overlay .tab-content').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('#admin-overlay .tab-btn').forEach(x=>x.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+  if(btn)btn.classList.add('active');
+};
+window.adm_addRule=addRule;window.adm_addPlace=addPlace;window.adm_addMetro=addMetro;
+window.adm_addAirport=addAirport;window.adm_addPhotoSlot=addPhotoSlot;
+window.adm_uploadLogo=uploadLogo;window.adm_clearLogo=clearLogo;
+window.adm_uploadPersonAdminPhoto=uploadPersonAdminPhoto;
+window.adm_clearPersonPhoto=clearPersonPhoto;window.adm_initAll=initAll;
+})();
+function startAdminHold(e){if(e)e.preventDefault();document.getElementById('admin-hold-bar').style.display='block';window._aHold=setTimeout(()=>{document.getElementById('admin-hold-bar').style.display='none';openAdmin();},1500);}
+function cancelAdminHold(){clearTimeout(window._aHold);document.getElementById('admin-hold-bar').style.display='none';}
+function openAdmin(){document.getElementById('admin-overlay').classList.add('open');document.body.style.overflow='hidden';if(window.adm_initAll)window.adm_initAll();}
+function closeAdmin(){document.getElementById('admin-overlay').classList.remove('open');document.body.style.overflow='';}
+
+</script>
+
+</body>
+</html>
