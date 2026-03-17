@@ -951,9 +951,17 @@ function buildGallery(){
       <div class="slide-placeholder">
         <div class="sp-icon">📷</div>
         <div class="sp-txt">${i+1}. Fotoğraf</div>
-        <div class="sp-sub">Yüklemek için tıklayın</div>
+        <div class="sp-sub">URL eklemek için tıklayın</div>
       </div>`;
     slide.onclick=()=>uploadGalleryImg(i);
+    // Kaydedilmiş fotoğrafı yükle
+    const saved=JSON.parse(localStorage.getItem('kk_settings')||'{}');
+    if(saved.photos&&saved.photos[i]){
+      const img2=slide.querySelector('img');
+      const ph2=slide.querySelector('.slide-placeholder');
+      if(img2){img2.src=saved.photos[i];img2.style.display='block';}
+      if(ph2)ph2.style.display='none';
+    }
     slider.appendChild(slide);
     const dot=document.createElement('div');
     dot.className='gallery-dot'+(i===0?' active':'');
@@ -975,22 +983,20 @@ function updateDots(){
 }
 
 function uploadGalleryImg(idx){
-  const inp=document.createElement('input');
-  inp.type='file';inp.accept='image/*';
-  inp.onchange=e=>{
-    const file=e.target.files[0];if(!file)return;
-    const reader=new FileReader();
-    reader.onload=ev=>{
-      if(idx!==null){
-        const img=document.getElementById('gimg-'+idx);
-        if(img){img.src=ev.target.result;img.style.display='block';}
-        const ph=img.parentElement.querySelector('.slide-placeholder');
-        if(ph)ph.style.display='none';
-      }
-    };
-    reader.readAsDataURL(file);
-  };
-  inp.click();
+  if(idx===null) return;
+  const raw=prompt((idx+1)+'. fotoğraf URL girin (Google Drive, Cloudinary, imgur vb.):','https://');
+  if(!raw||raw==='https://')return;
+  const src=convertDriveUrl(raw);
+  // Misafir sayfası - galeri slide güncelle
+  const img=document.getElementById('gimg-'+idx);
+  if(img){img.src=src;img.style.display='block';}
+  const ph=img&&img.parentElement&&img.parentElement.querySelector('.slide-placeholder');
+  if(ph)ph.style.display='none';
+  // localStorage'a kaydet
+  const d=JSON.parse(localStorage.getItem('kk_settings')||'{}');
+  if(!d.photos)d.photos={};
+  d.photos[idx]=src;
+  localStorage.setItem('kk_settings',JSON.stringify(d));
 }
 
 /* ── LOGOS ── */
@@ -1614,7 +1620,8 @@ setTimeout(()=>{ loadLeaflet(); watchHomeTab(); }, 400);
           <div>
             <div style="font-size:14px;font-weight:700;color:var(--dark2);margin-bottom:4px;">Homes Logosu</div>
             <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Nav çubuğu ve daire hero'sunda görünür</div>
-            <button onclick="adm_uploadLogo('homes')" style="background:var(--teal);border:none;border-radius:8px;padding:8px 14px;color:white;font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;">📁 Yükle</button>
+            <button onclick="adm_uploadLogo('homes')" style="background:var(--teal);border:none;border-radius:8px;padding:8px 14px;color:white;font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;">🔗 URL Ekle</button>
+            <p style="font-size:11px;color:var(--muted);margin-top:6px;">✅ Google Drive, Cloudinary, imgur desteklenir</p>
             <button onclick="adm_clearLogo('homes')" style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 14px;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;margin-left:6px;">🗑 Kaldır</button>
           </div>
         </div>
@@ -1631,7 +1638,7 @@ setTimeout(()=>{ loadLeaflet(); watchHomeTab(); }, 400);
           <div>
             <div style="font-size:14px;font-weight:700;color:var(--dark2);margin-bottom:4px;">Restoran Logosu</div>
             <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Restoran sayfası hero'sunda görünür (ayrı)</div>
-            <button onclick="adm_uploadLogo('rest')" style="background:var(--teal);border:none;border-radius:8px;padding:8px 14px;color:white;font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;">📁 Yükle</button>
+            <button onclick="adm_uploadLogo('rest')" style="background:var(--teal);border:none;border-radius:8px;padding:8px 14px;color:white;font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;">🔗 URL Ekle</button>
             <button onclick="adm_clearLogo('rest')" style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 14px;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;margin-left:6px;">🗑 Kaldır</button>
           </div>
         </div>
@@ -1715,7 +1722,7 @@ setTimeout(()=>{ loadLeaflet(); watchHomeTab(); }, 400);
           </div>
           <div>
             <div style="font-size:13px;font-weight:700;color:var(--dark2);margin-bottom:4px;">Profil Fotoğrafı</div>
-            <button onclick="adm_uploadPersonAdminPhoto(1)" style="background:var(--teal);border:none;border-radius:8px;padding:7px 14px;color:white;font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;">📁 Yükle</button>
+            <button onclick="adm_uploadPersonAdminPhoto(1)" style="background:var(--teal);border:none;border-radius:8px;padding:7px 14px;color:white;font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;">🔗 URL Ekle</button>
             <button onclick="adm_clearPersonPhoto(1)" style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:7px 12px;color:var(--muted);font-size:12px;cursor:pointer;font-family:'Nunito',sans-serif;margin-left:6px;">🗑 Kaldır</button>
           </div>
         </div>
@@ -1789,6 +1796,21 @@ setTimeout(()=>{ loadLeaflet(); watchHomeTab(); }, 400);
 <div id="admin-hold-bar" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:rgba(10,31,46,0.88);color:white;border-radius:20px;padding:10px 22px;font-size:13px;font-family:'Nunito',sans-serif;font-weight:700;z-index:501;">🔓 Admin paneli açılıyor...</div>
 <script>
 (function(){
+function convertDriveUrl(url){
+  if(!url) return url;
+  // https://drive.google.com/file/d/FILE_ID/... → lh3 (CORS sorunu yok)
+  let m = url.match(/drive\.google\.com\/file\/d\/([^/?]+)/);
+  if(m) return 'https://lh3.googleusercontent.com/d/'+m[1];
+  // https://drive.google.com/open?id=FILE_ID
+  m = url.match(/drive\.google\.com\/open\?id=([^&]+)/);
+  if(m) return 'https://lh3.googleusercontent.com/d/'+m[1];
+  // https://drive.google.com/uc?...&id=FILE_ID
+  m = url.match(/[?&]id=([^&]+)/);
+  if(m && url.includes('drive.google.com')) return 'https://lh3.googleusercontent.com/d/'+m[1];
+  // Diğer URL'ler olduğu gibi
+  return url;
+}
+
 'use strict';
 
 /* ══ DEFAULTS ══ */
@@ -2147,7 +2169,7 @@ function buildPhotoGrid(savedPhotos, count){
     const img=document.createElement('img');img.id=`pimg-${i}`;img.alt='';
     if(photoData[i]){img.src=photoData[i];img.style.display='block';}
     const ph=document.createElement('div');
-    ph.innerHTML=`<div class="ps-icon">📷</div><div class="ps-num">${i+1}. Fotoğraf</div>`;
+    ph.innerHTML=`<div class="ps-icon">📷</div><div class="ps-num">${i+1}. Fotoğraf<br><small style='font-weight:400;opacity:.7'>URL tıkla</small></div>`;
     const del=document.createElement('button');
     del.className='ps-del';del.textContent='✕';
     del.onclick=e=>{e.stopPropagation();clearPhoto(i);};
@@ -2160,30 +2182,23 @@ function addPhotoSlot(){
   buildPhotoGrid(photoData,photoCount);
 }
 function uploadPhoto(i){
-  const inp=document.createElement('input');inp.type='file';inp.accept='image/*';
-  inp.onchange=e=>{
-    const f=e.target.files[0];if(!f)return;
-    const r=new FileReader();
-    r.onload=ev=>{
-      const src=ev.target.result;
-      photoData[i]=src;
-      // Admin önizleme
-      const img=document.getElementById(`pimg-${i}`);
-      if(img){img.src=src;img.style.display='block';}
-      const slot=document.getElementById(`pslot-${i}`);
-      if(slot){const ph=slot.querySelector('div');if(ph)ph.style.display='none';}
-      // Misafir galerisi - ANINDA güncelle
-      const gImg=document.getElementById('gimg-'+i);
-      if(gImg){
-        gImg.src=src;
-        gImg.style.display='block';
-        const gPh=gImg.parentElement&&gImg.parentElement.querySelector('.slide-placeholder');
-        if(gPh)gPh.style.display='none';
-      }
-    };
-    r.readAsDataURL(f);
-  };
-  inp.click();
+  const raw=prompt((i+1)+'. fotoğraf URL girin (Google Drive, Cloudinary, imgur vb.):','https://');
+  if(!raw||raw==='https://')return;
+  const src=convertDriveUrl(raw);
+  photoData[i]=src;
+  // Admin önizleme
+  const img=document.getElementById(`pimg-${i}`);
+  if(img){img.src=src;img.style.display='block';}
+  const slot=document.getElementById(`pslot-${i}`);
+  if(slot){const ph=slot.querySelector('div');if(ph)ph.style.display='none';}
+  // Misafir galerisi - ANINDA güncelle
+  const gImg=document.getElementById('gimg-'+i);
+  if(gImg){
+    gImg.src=src;
+    gImg.style.display='block';
+    const gPh=gImg.parentElement&&gImg.parentElement.querySelector('.slide-placeholder');
+    if(gPh)gPh.style.display='none';
+  }
 }
 function clearPhoto(i){
   delete photoData[i];
@@ -2201,44 +2216,31 @@ function clearPhoto(i){
 
 /* ══ LOGOS ══ */
 function uploadLogo(type){
-  const inp=document.createElement('input');inp.type='file';inp.accept='image/*';
-  inp.onchange=e=>{
-    const f=e.target.files[0];if(!f)return;
-    const r=new FileReader();
-    r.onload=ev=>{
-      const src=ev.target.result;
-      // Admin önizleme
-      const img=document.getElementById(`${type}-logo-img`);
-      const ph=document.getElementById(`${type}-logo-ph`);
-      if(img){img.src=src;img.style.display='block';}
-      if(ph)ph.style.display='none';
-      // localStorage - ayrı key VE settings
-      const d=getData();
-      if(type==='homes'){
-        d.homesLogo=src;
-        localStorage.setItem('kk_logo_homes',src);
-      } else {
-        d.restLogo=src;
-        localStorage.setItem('kk_logo_rest',src);
-      }
-      localStorage.setItem('kk_settings',JSON.stringify(d));
-      // Misafir sayfası - ANINDA güncelle
-      if(type==='homes'){
-        ['homes-logo-nav','homes-logo-hero'].forEach(id=>{
-          const el=document.getElementById(id);
-          if(el){el.src=src;el.style.display='block';}
-        });
-        document.querySelectorAll('.nav-logo-img .lp,.logo-circle .logo-icon,.logo-circle .logo-txt').forEach(el=>el.style.display='none');
-      } else {
-        const el=document.getElementById('rest-logo-hero');
-        if(el){el.src=src;el.style.display='block';}
-        document.querySelectorAll('.rest-logo-circle .logo-icon,.rest-logo-circle .logo-txt').forEach(el=>el.style.display='none');
-      }
-      flashSave();
-    };
-    r.readAsDataURL(f);
-  };
-  inp.click();
+  const raw=prompt('Logo URL girin (Google Drive, Cloudinary, imgur vb.):','https://');
+  if(!raw||raw==='https://')return;
+  const src=convertDriveUrl(raw);
+  const img=document.getElementById(type+'-logo-img');
+  const ph=document.getElementById(type+'-logo-ph');
+  if(img){img.src=src;img.style.display='block';}
+  if(ph)ph.style.display='none';
+  const d=getData();
+  if(type==='homes'){
+    d.homesLogo=src;
+    localStorage.setItem('kk_logo_homes',src);
+    ['homes-logo-nav','homes-logo-hero'].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el){el.src=src;el.style.display='block';}
+    });
+    document.querySelectorAll('.nav-logo-img .lp,.logo-circle .logo-icon,.logo-circle .logo-txt').forEach(el=>el.style.display='none');
+  } else {
+    d.restLogo=src;
+    localStorage.setItem('kk_logo_rest',src);
+    const el=document.getElementById('rest-logo-hero');
+    if(el){el.src=src;el.style.display='block';}
+    document.querySelectorAll('.rest-logo-circle .logo-icon,.rest-logo-circle .logo-txt').forEach(el=>el.style.display='none');
+  }
+  localStorage.setItem('kk_settings',JSON.stringify(d));
+  flashSave();
 }
 function clearLogo(type){
   const img=document.getElementById(`${type}-logo-img`);
@@ -2315,8 +2317,6 @@ function saveAll(){
   localStorage.setItem('kk_settings',JSON.stringify(d));
   localStorage.setItem('kk_menu',JSON.stringify(d.menu));
   flashSave();
-  // Kaydet sonrası misafir sayfasını anında güncelle
-  if(typeof applyAdminSettings==='function') applyAdminSettings();
 }
 
 function loadAll(){
@@ -2370,32 +2370,25 @@ function flashSave(){
 
 /* ── PERSON PHOTOS (admin) ── */
 function uploadPersonAdminPhoto(num){
-  const inp=document.createElement('input');inp.type='file';inp.accept='image/*';
-  inp.onchange=e=>{
-    const f=e.target.files[0];if(!f)return;
-    const r=new FileReader();
-    r.onload=ev=>{
-      const src=ev.target.result;
-      // Admin önizleme
-      const img=document.getElementById('p'+num+'-photo-img');
-      const ph=document.getElementById('p'+num+'-photo-ph');
-      if(img){img.src=src;img.style.display='block';}
-      if(ph)ph.style.display='none';
-      // localStorage - ayrı key VE settings
-      const d=getData();
-      d['personPhoto'+num]=src;
-      localStorage.setItem('kk_photo_p'+num, src);
-      localStorage.setItem('kk_settings',JSON.stringify(d));
-      // Misafir sayfası - ANINDA güncelle
-      const guestImg=document.getElementById('person-img-'+num);
-      const guestPh=document.getElementById('person-ph-'+num);
-      if(guestImg){guestImg.src=src;guestImg.style.display='block';}
-      if(guestPh)guestPh.style.display='none';
-      flashSave();
-    };
-    r.readAsDataURL(f);
-  };
-  inp.click();
+  const raw=prompt('Profil fotoğrafı URL girin (Google Drive, Cloudinary, imgur vb.):','https://');
+  if(!raw||raw==='https://')return;
+  const src=convertDriveUrl(raw);
+  // Admin önizleme
+  const img=document.getElementById('p'+num+'-photo-img');
+  const ph=document.getElementById('p'+num+'-photo-ph');
+  if(img){img.src=src;img.style.display='block';}
+  if(ph)ph.style.display='none';
+  // localStorage
+  const d=getData();
+  d['personPhoto'+num]=src;
+  localStorage.setItem('kk_photo_p'+num,src);
+  localStorage.setItem('kk_settings',JSON.stringify(d));
+  // Misafir sayfası - ANINDA güncelle
+  const guestImg=document.getElementById('person-img-'+num);
+  const guestPh=document.getElementById('person-ph-'+num);
+  if(guestImg){guestImg.src=src;guestImg.style.display='block';}
+  if(guestPh)guestPh.style.display='none';
+  flashSave();
 }
 function clearPersonPhoto(num){
   // Admin önizleme temizle
