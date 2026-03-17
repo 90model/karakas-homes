@@ -944,6 +944,8 @@ function buildGallery(){
   const slider=document.getElementById('gallery-slider');
   const dots=document.getElementById('gallery-dots');
   slider.innerHTML='';dots.innerHTML='';
+  const _saved=JSON.parse(localStorage.getItem('kk_settings')||'{}');
+  const _photos=_saved.photos||{};
   for(let i=0;i<SLIDE_COUNT;i++){
     const slide=document.createElement('div');
     slide.className='gallery-slide';
@@ -954,13 +956,11 @@ function buildGallery(){
         <div class="sp-sub">URL eklemek için tıklayın</div>
       </div>`;
     slide.onclick=()=>uploadGalleryImg(i);
-    // Kaydedilmiş fotoğrafı yükle
-    const saved=JSON.parse(localStorage.getItem('kk_settings')||'{}');
-    if(saved.photos&&saved.photos[i]){
-      const img2=slide.querySelector('img');
-      const ph2=slide.querySelector('.slide-placeholder');
-      if(img2){img2.src=saved.photos[i];img2.style.display='block';}
-      if(ph2)ph2.style.display='none';
+    if(_photos[i]){
+      const _img=slide.querySelector('img');
+      const _ph=slide.querySelector('.slide-placeholder');
+      if(_img){_img.src=_photos[i];_img.style.display='block';}
+      if(_ph)_ph.style.display='none';
     }
     slider.appendChild(slide);
     const dot=document.createElement('div');
@@ -986,7 +986,7 @@ function uploadGalleryImg(idx){
   if(idx===null) return;
   const raw=prompt((idx+1)+'. fotoğraf URL girin (Google Drive, Cloudinary, imgur vb.):','https://');
   if(!raw||raw==='https://')return;
-  const src=convertDriveUrl(raw);
+  const src=(typeof convertDriveUrl==='function'?convertDriveUrl:window.convertDriveUrl||function(u){return u;})(raw);
   // Misafir sayfası - galeri slide güncelle
   const img=document.getElementById('gimg-'+idx);
   if(img){img.src=src;img.style.display='block';}
@@ -1293,8 +1293,6 @@ function applyAd(elId,adData){
       if(ic&&adData.icon)ic.textContent=adData.icon;
     }
   }
-}
-
 
   // Person cards
   if(d.about){
@@ -1305,7 +1303,6 @@ function applyAd(elId,adData){
       if(d.about['p'+n+'_bio']){const el=document.getElementById('person-bio-'+n);if(el)el.textContent=d.about['p'+n+'_bio'];}
       if(d.about['p'+n+'_ig']){const el=document.getElementById('person-ig-'+n);if(el){el.href=d.about['p'+n+'_ig'];el.style.display='inline-flex';}}
       if(d.about['p'+n+'_wa']){const el=document.getElementById('person-wa-'+n);if(el){el.href='https://wa.me/'+d.about['p'+n+'_wa'].replace(/\D/g,'');el.style.display='inline-flex';}}
-      // Ayrı key varsa öncelikli kullan
       const photoSrc=localStorage.getItem('kk_photo_p'+n)||d['personPhoto'+n];
       if(photoSrc){
         const img=document.getElementById('person-img-'+n);
@@ -1326,6 +1323,16 @@ function applyAd(elId,adData){
       }
     });
   }
+  // Galeri fotoğrafları
+  if(d.photos){
+    Object.entries(d.photos).forEach(([i,src])=>{
+      const img=document.getElementById('gimg-'+i);
+      if(img){img.src=src;img.style.display='block';}
+      const slide=img&&img.parentElement;
+      if(slide){const ph=slide.querySelector('.slide-placeholder');if(ph)ph.style.display='none';}
+    });
+  }
+}
 
 applyAdminSettings();
 
@@ -2184,7 +2191,7 @@ function addPhotoSlot(){
 function uploadPhoto(i){
   const raw=prompt((i+1)+'. fotoğraf URL girin (Google Drive, Cloudinary, imgur vb.):','https://');
   if(!raw||raw==='https://')return;
-  const src=convertDriveUrl(raw);
+  const src=(typeof convertDriveUrl==='function'?convertDriveUrl:window.convertDriveUrl||function(u){return u;})(raw);
   photoData[i]=src;
   // Admin önizleme
   const img=document.getElementById(`pimg-${i}`);
@@ -2218,7 +2225,7 @@ function clearPhoto(i){
 function uploadLogo(type){
   const raw=prompt('Logo URL girin (Google Drive, Cloudinary, imgur vb.):','https://');
   if(!raw||raw==='https://')return;
-  const src=convertDriveUrl(raw);
+  const src=(typeof convertDriveUrl==='function'?convertDriveUrl:window.convertDriveUrl||function(u){return u;})(raw);
   const img=document.getElementById(type+'-logo-img');
   const ph=document.getElementById(type+'-logo-ph');
   if(img){img.src=src;img.style.display='block';}
@@ -2372,7 +2379,7 @@ function flashSave(){
 function uploadPersonAdminPhoto(num){
   const raw=prompt('Profil fotoğrafı URL girin (Google Drive, Cloudinary, imgur vb.):','https://');
   if(!raw||raw==='https://')return;
-  const src=convertDriveUrl(raw);
+  const src=(typeof convertDriveUrl==='function'?convertDriveUrl:window.convertDriveUrl||function(u){return u;})(raw);
   // Admin önizleme
   const img=document.getElementById('p'+num+'-photo-img');
   const ph=document.getElementById('p'+num+'-photo-ph');
@@ -2447,7 +2454,8 @@ window.adm_setTab=function(t,btn){
 };
 window.adm_addRule=addRule;window.adm_addPlace=addPlace;window.adm_addMetro=addMetro;
 window.adm_addAirport=addAirport;window.adm_addPhotoSlot=addPhotoSlot;
-window.adm_uploadLogo=uploadLogo;window.adm_clearLogo=clearLogo;
+window.adm_uploadLogo=uploadLogo;
+window.convertDriveUrl=convertDriveUrl;window.adm_clearLogo=clearLogo;
 window.adm_uploadPersonAdminPhoto=uploadPersonAdminPhoto;
 window.adm_clearPersonPhoto=clearPersonPhoto;window.adm_initAll=initAll;
 window.adm_uploadPhoto=uploadPhoto;window.adm_clearPhoto=clearPhoto;
