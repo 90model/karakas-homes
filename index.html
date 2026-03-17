@@ -1,0 +1,2389 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0A2A3A">
+<title>Karakaş Homes – Misafir Rehberi</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --teal:#00B4A6;--teal2:#00D4C4;
+  --blue:#1565C0;--blue2:#1E88E5;
+  --green:#00897B;
+  --dark:#0A1F2E;--dark2:#0D2D40;
+  --accent:#FFB300;
+  --bg:#F0F7F6;--bg2:#E0F2F1;
+  --muted:#546E7A;--border:#B2DFDB;--card:#FFFFFF;
+  --grad:linear-gradient(135deg,#0A2A3A 0%,#005F73 60%,#00897B 100%);
+}
+html{scroll-behavior:smooth;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--dark2);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+
+/* ── NAV ── */
+nav{background:var(--dark);position:sticky;top:0;z-index:300;box-shadow:0 2px 20px rgba(0,0,0,0.3);}
+.nav-top{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid rgba(0,180,166,0.2);gap:10px;}
+.nav-logo-area{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.nav-logo-img{width:36px;height:36px;border-radius:10px;background:transparent;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;position:relative;}.nav-logo-img img{width:100%;height:100%;object-fit:cover;border-radius:8px;display:none;}
+.nav-logo-img img{width:100%;height:100%;object-fit:cover;border-radius:8px;display:none;position:absolute;inset:0;}
+.nav-logo-img .lp{font-size:16px;}
+.nav-brand{font-family:'Playfair Display',serif;font-size:17px;color:var(--teal2);font-weight:600;white-space:nowrap;line-height:1.2;}
+.nav-brand span{display:block;font-size:10px;color:var(--teal);font-family:'Nunito',sans-serif;font-weight:400;letter-spacing:1px;text-transform:uppercase;}
+.lang-scroll{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;flex-shrink:0;}
+.lang-scroll::-webkit-scrollbar{display:none;}
+.lang-btn{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:#aaa;padding:5px 9px;font-size:11px;font-weight:700;border-radius:20px;cursor:pointer;font-family:'Nunito',sans-serif;transition:all .2s;white-space:nowrap;flex-shrink:0;min-height:32px;}
+.lang-btn.active{background:var(--teal);color:var(--dark);border-color:var(--teal);}
+.nav-pages{display:flex;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+.nav-pages::-webkit-scrollbar{display:none;}
+.page-btn{flex:1;min-width:80px;background:none;border:none;color:#aaa;padding:11px 6px;font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;cursor:pointer;font-family:'Nunito',sans-serif;border-bottom:3px solid transparent;transition:all .25s;white-space:nowrap;min-height:40px;}
+.page-btn.active{color:var(--teal2);border-bottom-color:var(--teal2);background:rgba(0,180,166,0.08);}
+
+.page{display:none;}.page.active{display:block;}
+
+/* ── HERO ── */
+.hero{background:var(--grad);padding:44px 20px 38px;text-align:center;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;width:350px;height:350px;border-radius:50%;border:1px solid rgba(0,180,166,0.15);top:-80px;right:-80px;pointer-events:none;}
+.hero::after{content:'';position:absolute;width:250px;height:250px;border-radius:50%;border:1px solid rgba(0,212,196,0.1);bottom:-60px;left:-60px;pointer-events:none;}
+.logo-wrap{position:relative;z-index:2;display:flex;justify-content:center;margin-bottom:0;}
+.logo-circle{width:86px;height:86px;border-radius:24px;background:transparent;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;}.logo-circle img{width:100%;height:100%;object-fit:cover;border-radius:22px;display:none;}
+.logo-circle img{width:100%;height:100%;object-fit:cover;border-radius:22px;display:none;position:absolute;inset:0;}
+.logo-circle .logo-icon{font-size:26px;margin-bottom:3px;}
+.logo-circle .logo-txt{font-size:9px;color:rgba(255,255,255,0.6);text-align:center;line-height:1.3;}
+.hero-eyebrow{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--teal2);margin-bottom:10px;position:relative;z-index:2;}
+.hero-title{font-family:'Playfair Display',serif;font-size:clamp(30px,9vw,56px);font-weight:600;color:#fff;line-height:1.1;margin-bottom:10px;position:relative;z-index:2;}
+.hero-title em{color:var(--teal2);font-style:italic;}
+.hero-sub{font-size:14px;color:rgba(255,255,255,0.75);max-width:360px;margin:0 auto 16px;line-height:1.7;position:relative;z-index:2;}
+.chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;position:relative;z-index:2;}
+.chip{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:30px;padding:6px 14px;font-size:12px;color:rgba(255,255,255,0.85);font-weight:700;}
+
+/* Hero link buttons */
+.hero-links{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:16px;position:relative;z-index:2;}
+.hero-link-btn{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:30px;padding:8px 16px;font-size:12px;font-weight:700;color:white;text-decoration:none;font-family:'Nunito',sans-serif;transition:all .2s;backdrop-filter:blur(4px);}
+.hero-link-btn:hover{background:rgba(255,255,255,0.25);}
+
+/* ── SECTION ── */
+.section{padding:24px 16px;max-width:700px;margin:0 auto;}
+@media(min-width:600px){.section{padding:30px 24px;}}
+.sec-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--teal);font-weight:700;margin-bottom:4px;}
+.sec-title{font-family:'Playfair Display',serif;font-size:23px;font-weight:600;color:var(--dark2);line-height:1.2;}
+.sec-rule{width:36px;height:3px;background:linear-gradient(90deg,var(--teal),var(--green));border-radius:4px;margin:8px 0 16px;}
+.sec-text{font-size:15px;line-height:1.8;color:var(--muted);margin-bottom:16px;}
+
+/* ── AD ZONES ── */
+.ad-zone{margin:0 16px 4px;max-width:700px;margin-left:auto;margin-right:auto;}
+.ad-banner{background:var(--card);border:2px dashed var(--border);border-radius:14px;padding:14px 18px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s;text-decoration:none;}
+.ad-banner:hover{border-color:var(--teal);background:var(--bg2);}
+.ad-banner-icon{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--teal),var(--green));display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.ad-banner-text{flex:1;}
+.ad-banner-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--teal);font-weight:700;margin-bottom:2px;}
+.ad-banner-title{font-size:14px;font-weight:800;color:var(--dark2);}
+.ad-banner-sub{font-size:12px;color:var(--muted);}
+.ad-banner-arrow{font-size:18px;color:var(--teal);flex-shrink:0;}
+
+.ad-cards-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.ad-card{background:var(--card);border:2px dashed var(--border);border-radius:14px;padding:16px 12px;text-align:center;cursor:pointer;transition:all .2s;text-decoration:none;display:block;}
+.ad-card:hover{border-color:var(--teal);background:var(--bg2);}
+.ad-card-icon{font-size:28px;margin-bottom:6px;}
+.ad-card-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--teal);font-weight:700;margin-bottom:2px;}
+.ad-card-title{font-size:13px;font-weight:800;color:var(--dark2);}
+.ad-card-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.ad-edit-hint{font-size:10px;color:var(--border);text-align:center;margin-top:4px;}
+
+/* ── PHOTO GALLERY ── */
+.gallery-wrap{position:relative;margin-bottom:6px;}
+.gallery-slider{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;gap:10px;padding:0 16px 10px;}
+.gallery-slider::-webkit-scrollbar{display:none;}
+.gallery-slide{scroll-snap-align:start;flex-shrink:0;width:calc(100vw - 56px);max-width:360px;height:220px;border-radius:16px;overflow:hidden;position:relative;background:var(--bg2);border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.gallery-slide img{width:100%;height:100%;object-fit:cover;display:none;border-radius:14px;}
+.gallery-slide .slide-placeholder{text-align:center;color:var(--muted);}
+.gallery-slide .slide-placeholder .sp-icon{font-size:32px;margin-bottom:6px;}
+.gallery-slide .slide-placeholder .sp-txt{font-size:12px;font-weight:700;}
+.gallery-slide .slide-placeholder .sp-sub{font-size:10px;color:var(--border);margin-top:2px;}
+.gallery-add{scroll-snap-align:start;flex-shrink:0;width:100px;height:220px;border-radius:16px;background:var(--bg2);border:2px dashed var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;gap:6px;transition:all .2s;}
+.gallery-add:hover{border-color:var(--teal);background:#d0ecea;}
+.gallery-add .ga-icon{font-size:28px;}
+.gallery-add .ga-txt{font-size:11px;font-weight:800;color:var(--teal);}
+.gallery-dots{display:flex;justify-content:center;gap:6px;margin-top:4px;}
+.gallery-dot{width:6px;height:6px;border-radius:50%;background:var(--border);transition:all .2s;}
+.gallery-dot.active{background:var(--teal);width:18px;border-radius:4px;}
+
+/* ── FEATURE GRID ── */
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px;}
+.feat-card{background:var(--card);border-radius:16px;padding:16px;border:1px solid var(--border);position:relative;overflow:hidden;}
+.feat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--teal),var(--green));}
+.feat-icon{font-size:22px;margin-bottom:7px;display:block;}
+.feat-title{font-size:13px;font-weight:800;color:var(--dark2);margin-bottom:3px;}
+.feat-body{font-size:12px;line-height:1.6;color:var(--muted);}
+
+/* ── INFO CARD ── */
+.info-card{background:var(--card);border-radius:16px;border:1px solid var(--border);overflow:hidden;}
+.info-row{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border-bottom:1px solid var(--bg2);}
+.info-row:last-child{border-bottom:none;}
+.info-icon-wrap{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--teal),var(--green));display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.info-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--teal);font-weight:700;margin-bottom:2px;}
+.info-value{font-size:15px;font-weight:700;color:var(--dark2);}
+.info-note{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.5;}
+.info-link{display:inline-flex;align-items:center;gap:4px;margin-top:5px;font-size:12px;font-weight:700;color:var(--teal);text-decoration:none;background:var(--bg2);padding:4px 10px;border-radius:20px;}
+
+/* ── RULES ── */
+.rules-card{background:var(--dark2);border-radius:20px;padding:20px 18px;}
+.rules-head{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.rules-head-icon{width:42px;height:42px;border-radius:12px;background:rgba(0,180,166,0.2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.rules-head-title{font-family:'Playfair Display',serif;font-size:18px;color:var(--teal2);}
+.rule-item{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.07);}
+.rule-item:last-child{border-bottom:none;}
+.rule-num{width:24px;height:24px;border-radius:8px;flex-shrink:0;background:linear-gradient(135deg,var(--teal),var(--green));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--dark);margin-top:1px;}
+.rule-text{font-size:14px;color:rgba(255,255,255,0.8);line-height:1.6;}
+
+/* ── ATTRACTIONS ── */
+.attr-card{display:flex;gap:12px;align-items:flex-start;padding:14px;background:var(--card);border-radius:16px;border:1px solid var(--border);margin-bottom:10px;}
+.attr-dist{background:linear-gradient(135deg,var(--blue),var(--teal));color:white;border-radius:12px;padding:10px 8px;font-size:11px;font-weight:800;text-align:center;min-width:52px;flex-shrink:0;line-height:1.3;}
+.attr-name{font-size:15px;font-weight:800;color:var(--dark2);margin-bottom:3px;}
+.attr-desc{font-size:13px;color:var(--muted);line-height:1.5;}
+
+/* ── TRANSPORT ── */
+.tr-card{border-radius:18px;padding:18px;margin-bottom:12px;}
+.tr-teal{background:linear-gradient(135deg,#004D5A,#006B6B);}
+.tr-blue{background:linear-gradient(135deg,#0D3B6E,#1565C0);}
+.tr-green{background:linear-gradient(135deg,#004D40,#00695C);}
+.tr-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.tr-icon{font-size:24px;}
+.tr-name{font-family:'Playfair Display',serif;font-size:17px;color:var(--teal2);}
+.tr-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.1);gap:8px;}
+.tr-item:last-child{border-bottom:none;}
+.tr-lbl{font-size:13px;color:rgba(255,255,255,0.75);}
+.tr-val{font-size:13px;font-weight:800;color:white;white-space:nowrap;}
+
+/* ── EMERGENCY ── */
+.emerg-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.emerg-card{background:linear-gradient(135deg,#7B1F1F,#B71C1C);border-radius:16px;padding:16px 10px;text-align:center;}
+.emerg-num{font-size:28px;font-weight:800;color:white;letter-spacing:2px;margin:6px 0;}
+.emerg-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.8);font-weight:700;}
+
+/* ── RESTAURANT ── */
+.rest-hero{background:var(--grad);padding:44px 20px 38px;text-align:center;position:relative;overflow:hidden;}
+.rest-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(0,137,123,0.4) 0%,transparent 60%),radial-gradient(ellipse at 70% 20%,rgba(21,101,192,0.3) 0%,transparent 50%);pointer-events:none;}
+.rest-logo-circle{width:100px;height:100px;border-radius:50%;background:transparent;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;}.rest-logo-circle img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:none;}
+.rest-logo-circle img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:none;position:absolute;inset:0;}
+.rest-badge{display:inline-block;background:rgba(0,180,166,0.2);border:1px solid rgba(0,180,166,0.5);color:var(--teal2);font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:6px 16px;border-radius:30px;margin-bottom:12px;font-weight:700;position:relative;z-index:2;}
+.rest-name{font-family:'Playfair Display',serif;font-size:clamp(26px,8vw,48px);font-weight:600;color:white;line-height:1.1;margin-bottom:8px;position:relative;z-index:2;}
+.rest-sub{font-family:'Playfair Display',serif;font-size:15px;font-style:italic;color:var(--teal2);margin-bottom:20px;position:relative;z-index:2;}
+.menu-btn{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--teal),var(--green));color:white;border:none;border-radius:50px;padding:13px 26px;font-size:14px;font-weight:800;cursor:pointer;text-decoration:none;box-shadow:0 8px 24px rgba(0,180,166,0.35);transition:transform .15s,box-shadow .15s;font-family:'Nunito',sans-serif;position:relative;z-index:2;}
+.menu-btn:hover{transform:translateY(-2px);}
+.menu-btn-sm{font-size:13px;padding:9px 16px;}
+
+.offer-banner{background:linear-gradient(135deg,var(--accent),#FF8F00);border-radius:18px;padding:18px;display:flex;gap:14px;align-items:center;margin-bottom:18px;box-shadow:0 6px 20px rgba(255,179,0,0.25);}
+.offer-icon{width:48px;height:48px;border-radius:14px;background:rgba(255,255,255,0.25);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;}
+.offer-title{font-size:15px;font-weight:800;color:var(--dark);margin-bottom:3px;}
+.offer-body{font-size:13px;color:rgba(10,31,46,0.8);line-height:1.5;}
+
+.menu-sec-title{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:800;color:var(--dark2);margin:24px 0 10px;}
+.menu-sec-icon{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--teal),var(--green));display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.menu-divider{flex:1;height:1px;background:var(--border);}
+.menu-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--bg2);}
+.menu-row:last-child{border-bottom:none;}
+.mi-name{font-size:14px;font-weight:700;color:var(--dark2);margin-bottom:2px;}
+.mi-desc{font-size:12px;color:var(--muted);line-height:1.5;}
+.mi-price{font-size:14px;font-weight:800;color:var(--teal);white-space:nowrap;flex-shrink:0;background:var(--bg2);border-radius:8px;padding:3px 9px;align-self:flex-start;}
+
+.contact-strip{background:var(--dark2);padding:20px 16px;}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:700px;margin:0 auto;}
+@media(min-width:480px){.contact-grid{grid-template-columns:repeat(4,1fr);}}
+.contact-item{text-align:center;}
+.contact-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--teal);font-weight:700;margin-bottom:3px;}
+.contact-value{font-size:13px;font-weight:700;color:white;line-height:1.3;}
+
+.stripe{background:var(--bg2);}
+footer{background:var(--dark);padding:20px 16px;text-align:center;border-top:1px solid rgba(0,180,166,0.2);}
+.footer-brand{font-family:'Playfair Display',serif;font-size:15px;color:var(--teal2);margin-bottom:3px;}
+.footer-copy{font-size:12px;color:#546E7A;}
+
+/* ── RTL ── */
+.rtl{direction:rtl;}
+.rtl .nav-logo-area,.rtl .info-row,.rtl .rule-item,.rtl .attr-card,.rtl .tr-item,.rtl .offer-banner,.rtl .menu-sec-title,.rtl .menu-row,.rtl .ad-banner{flex-direction:row-reverse;}
+
+/* ── iOS safe area ── */
+@supports(padding-top:env(safe-area-inset-top)){
+  nav{padding-top:env(safe-area-inset-top);}
+  footer{padding-bottom:calc(20px + env(safe-area-inset-bottom));}
+}
+
+/* ── BİZ KİMİZ ── */
+.about-hero{background:var(--grad);padding:44px 20px 38px;text-align:center;position:relative;overflow:hidden;}
+.about-hero::before{content:'';position:absolute;width:350px;height:350px;border-radius:50%;border:1px solid rgba(0,180,166,0.15);top:-80px;right:-80px;pointer-events:none;}
+.about-hero::after{content:'';position:absolute;width:250px;height:250px;border-radius:50%;border:1px solid rgba(0,212,196,0.1);bottom:-60px;left:-60px;pointer-events:none;}
+.person-card{background:var(--card);border-radius:24px;border:1px solid var(--border);overflow:hidden;margin-bottom:20px;}
+.person-photo-wrap{position:relative;width:100%;height:280px;background:var(--bg2);overflow:hidden;border-radius:16px 16px 0 0;}
+.person-photo-wrap img{width:100%;height:100%;object-fit:cover;display:none;}
+.person-photo-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;}
+.person-photo-placeholder .pp-icon{font-size:52px;}
+.person-photo-placeholder .pp-txt{font-size:12px;color:var(--muted);font-weight:700;}
+.person-photo-overlay{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(10,31,46,0.85),transparent);padding:20px 20px 16px;display:flex;align-items:flex-end;justify-content:space-between;}
+.person-name-badge{font-family:'Playfair Display',serif;font-size:22px;color:white;font-weight:600;}
+.person-role-badge{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--teal2);font-weight:700;margin-top:3px;}
+.person-body{padding:20px;}
+.person-bio{font-size:14px;line-height:1.85;color:var(--muted);}
+.person-socials{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;}
+.person-social-btn{display:inline-flex;align-items:center;gap:6px;background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:7px 14px;font-size:12px;font-weight:700;color:var(--dark2);text-decoration:none;transition:all .2s;}
+.person-social-btn:hover{border-color:var(--teal);color:var(--teal);}
+.about-values{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;max-width:500px;margin-left:auto;margin-right:auto;}
+.about-value-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;position:relative;overflow:hidden;}
+.about-value-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--teal),var(--green));}
+.about-value-icon{font-size:24px;margin-bottom:6px;}
+.about-value-title{font-size:13px;font-weight:800;color:var(--dark2);margin-bottom:3px;}
+.about-value-text{font-size:12px;color:var(--muted);line-height:1.5;}
+
+/* ── MENU ITEM IMAGE ── */
+.menu-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--bg2);}
+.menu-row:last-child{border-bottom:none;}
+.mi-img{width:68px;height:68px;border-radius:12px;object-fit:cover;flex-shrink:0;display:none;cursor:pointer;}
+.mi-img.has-img{display:block;}
+.mi-img-placeholder{width:68px;height:68px;border-radius:12px;background:var(--bg2);border:1.5px dashed var(--border);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;cursor:pointer;transition:all .2s;}
+.mi-img-placeholder:hover{border-color:var(--teal);background:#d0ecea;}
+.mi-content{flex:1;min-width:0;}
+
+/* ── HARİTA ── */
+.map-card{background:var(--card);border-radius:20px;border:1px solid var(--border);overflow:hidden;margin-bottom:16px;}
+.map-card-head{padding:14px 18px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--bg2);}
+.map-card-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--teal),var(--green));display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.map-card-title{font-size:15px;font-weight:800;color:var(--dark2);}
+#apt-map{width:100%;height:220px;z-index:1;}
+.map-hint{padding:10px 16px;font-size:12px;color:var(--muted);text-align:center;border-top:1px solid var(--bg2);}
+.map-actions{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--bg2);}
+.map-action-btn{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-size:12px;font-weight:700;color:var(--dark2);text-decoration:none;font-family:'Nunito',sans-serif;transition:all .2s;}
+.map-action-btn:hover{border-color:var(--teal);color:var(--teal);}
+.map-action-btn.primary{background:linear-gradient(135deg,var(--teal),var(--green));color:white;border-color:transparent;}
+.map-action-btn.primary:hover{opacity:.9;}
+
+/* ── ULAŞIM (Restoran) ── */
+.route-card{background:var(--dark2);border-radius:20px;padding:20px;margin-bottom:16px;}
+.route-head{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+.route-icon{width:46px;height:46px;border-radius:14px;background:rgba(0,180,166,0.2);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.route-title{font-family:'Playfair Display',serif;font-size:18px;color:var(--teal2);}
+.route-subtitle{font-size:12px;color:rgba(255,255,255,0.5);margin-top:2px;}
+.route-steps{display:flex;flex-direction:column;gap:0;}
+.route-step{display:flex;gap:14px;align-items:flex-start;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.07);}
+.route-step:last-child{border-bottom:none;}
+.route-step-num{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--green));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--dark);flex-shrink:0;margin-top:1px;}
+.route-step-body{flex:1;}
+.route-step-title{font-size:14px;font-weight:800;color:white;margin-bottom:2px;}
+.route-step-desc{font-size:12px;color:rgba(255,255,255,0.6);line-height:1.5;}
+.route-step-time{font-size:11px;font-weight:700;color:var(--teal2);background:rgba(0,180,166,0.15);padding:2px 8px;border-radius:10px;white-space:nowrap;flex-shrink:0;align-self:flex-start;margin-top:2px;}
+.route-btns{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
+.route-btn{flex:1;min-width:120px;display:inline-flex;align-items:center;justify-content:center;gap:6px;border-radius:12px;padding:10px 14px;font-size:13px;font-weight:800;text-decoration:none;font-family:'Nunito',sans-serif;transition:all .2s;}
+.route-btn-primary{background:linear-gradient(135deg,var(--teal),var(--green));color:white;}
+.route-btn-secondary{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.8);}
+
+
+#admin-overlay{display:none;position:fixed;inset:0;z-index:9999;overflow-y:auto;background:#F0F7F6;}
+#admin-overlay.open{display:block;}
+
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --teal:#00B4A6;--teal2:#00D4C4;--green:#00897B;
+  --dark:#0A1F2E;--dark2:#0D2D40;
+  --accent:#FFB300;--red:#E53935;
+  --bg:#F0F7F6;--bg2:#E0F2F1;
+  --border:#B2DFDB;--card:#fff;--muted:#546E7A;
+  --grad:linear-gradient(135deg,#0A2A3A 0%,#005F73 60%,#00897B 100%);
+}
+html{font-size:16px;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--dark2);min-height:100vh;-webkit-font-smoothing:antialiased;}
+
+/* LOGIN */
+#login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--grad);padding:20px;}
+.login-box{background:rgba(255,255,255,0.08);backdrop-filter:blur(12px);border:1px solid rgba(0,212,196,0.3);border-radius:24px;padding:40px 32px;width:100%;max-width:380px;text-align:center;}
+.login-icon{font-size:48px;margin-bottom:12px;}
+.login-title{font-family:'Playfair Display',serif;font-size:26px;color:white;margin-bottom:6px;}
+.login-sub{font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:28px;}
+.login-input{width:100%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:12px;padding:14px 16px;font-size:16px;color:white;font-family:'Nunito',sans-serif;outline:none;letter-spacing:3px;text-align:center;margin-bottom:14px;transition:border .2s;}
+.login-input::placeholder{letter-spacing:0;color:rgba(255,255,255,0.4);}
+.login-input:focus{border-color:var(--teal2);}
+.login-btn{width:100%;background:linear-gradient(135deg,var(--teal),var(--green));border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:800;color:white;cursor:pointer;font-family:'Nunito',sans-serif;}
+.login-err{font-size:13px;color:#FF8A80;margin-top:10px;display:none;}
+
+/* SHELL */
+#admin-shell{display:none;}
+.topbar{background:var(--dark);position:sticky;top:0;z-index:200;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 16px rgba(0,0,0,0.3);}
+.topbar-brand{font-family:'Playfair Display',serif;font-size:18px;color:var(--teal2);}
+.topbar-brand span{font-size:11px;color:var(--teal);font-family:'Nunito',sans-serif;font-weight:400;display:block;letter-spacing:1px;}
+.topbar-right{display:flex;gap:8px;align-items:center;}
+.save-all-btn{background:linear-gradient(135deg,var(--teal),var(--green));border:none;border-radius:20px;padding:8px 18px;font-size:13px;font-weight:800;color:white;cursor:pointer;font-family:'Nunito',sans-serif;}
+.logout-btn{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:8px 14px;font-size:12px;font-weight:700;color:#aaa;cursor:pointer;font-family:'Nunito',sans-serif;}
+
+/* TABS */
+.tab-nav{display:flex;overflow-x:auto;scrollbar-width:none;background:var(--dark2);border-bottom:1px solid rgba(0,180,166,0.15);}
+.tab-nav::-webkit-scrollbar{display:none;}
+.tab-btn{flex-shrink:0;background:none;border:none;color:#888;padding:12px 14px;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;cursor:pointer;font-family:'Nunito',sans-serif;border-bottom:3px solid transparent;transition:all .2s;white-space:nowrap;}
+.tab-btn.active{color:var(--teal2);border-bottom-color:var(--teal2);}
+.tab-content{display:none;padding:20px 16px;max-width:780px;margin:0 auto;}
+.tab-content.active{display:block;}
+
+/* CARDS */
+.admin-card{background:var(--card);border-radius:18px;border:1px solid var(--border);margin-bottom:16px;overflow:hidden;}
+.admin-card-head{padding:14px 18px;border-bottom:1px solid var(--bg2);display:flex;align-items:center;gap:10px;}
+.admin-card-icon{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--teal),var(--green));display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+.admin-card-title{font-size:15px;font-weight:800;color:var(--dark2);}
+.admin-card-body{padding:16px 18px;}
+
+/* FORM */
+.field{margin-bottom:13px;}
+.field label{display:block;font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);margin-bottom:5px;}
+.field input,.field textarea,.field select{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:10px 13px;font-size:14px;color:var(--dark2);font-family:'Nunito',sans-serif;outline:none;transition:border .2s;}
+.field input:focus,.field textarea:focus{border-color:var(--teal);}
+.field textarea{resize:vertical;min-height:68px;line-height:1.6;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media(max-width:480px){.field-row{grid-template-columns:1fr;}}
+.field-row3{display:grid;grid-template-columns:1fr 1fr 80px;gap:10px;}
+@media(max-width:500px){.field-row3{grid-template-columns:1fr;}}
+
+/* REPEATER (rules, attractions, transport) */
+.rep-item{background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px;position:relative;}
+.rep-item-head{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.rep-num{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,var(--teal),var(--green));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:white;flex-shrink:0;}
+.rep-label{font-size:13px;font-weight:800;color:var(--dark2);flex:1;}
+.rep-del{background:rgba(229,57,53,0.1);border:none;border-radius:8px;padding:5px 10px;font-size:12px;color:var(--red);cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;}
+.add-rep-btn{width:100%;background:var(--bg2);border:1.5px dashed var(--border);border-radius:12px;padding:12px;font-size:13px;font-weight:800;color:var(--teal);cursor:pointer;font-family:'Nunito',sans-serif;transition:all .2s;}
+.add-rep-btn:hover{border-color:var(--teal);background:#d0ecea;}
+
+/* PHOTO GRID */
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px;}
+@media(max-width:400px){.photo-grid{grid-template-columns:repeat(2,1fr);}}
+.photo-slot{aspect-ratio:4/3;border-radius:12px;background:var(--bg2);border:2px dashed var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative;transition:all .2s;}
+.photo-slot:hover{border-color:var(--teal);}
+.photo-slot img{width:100%;height:100%;object-fit:cover;display:none;position:absolute;inset:0;border-radius:10px;}
+.photo-slot .ps-icon{font-size:24px;margin-bottom:4px;}
+.photo-slot .ps-num{font-size:11px;font-weight:700;color:var(--muted);}
+.photo-slot .ps-del{position:absolute;top:6px;right:6px;background:rgba(229,57,53,0.85);border:none;border-radius:6px;color:white;font-size:12px;padding:3px 7px;cursor:pointer;display:none;font-family:'Nunito',sans-serif;font-weight:700;}
+.photo-slot:hover .ps-del{display:block;}
+
+/* AD ZONES */
+.ad-zone-card{background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px;}
+.ad-zone-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--teal);font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.ad-zone-label::after{content:'';flex:1;height:1px;background:var(--border);}
+.icon-pick-wrap{display:flex;align-items:center;gap:8px;}
+.icon-preview{font-size:26px;width:44px;height:44px;border-radius:10px;background:var(--bg2);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.icon-input{flex:1;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:9px 12px;font-size:20px;font-family:'Nunito',sans-serif;outline:none;width:70px;text-align:center;}
+.icon-input:focus{border-color:var(--teal);}
+
+/* MENU TABLE */
+.menu-table{width:100%;border-collapse:collapse;}
+.menu-table th{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);font-weight:700;padding:8px 10px;text-align:left;border-bottom:2px solid var(--bg2);}
+.menu-table td{padding:5px 7px;border-bottom:1px solid var(--bg2);}
+.menu-table tr:last-child td{border-bottom:none;}
+.menu-table input{background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:7px 9px;font-size:13px;color:var(--dark2);font-family:'Nunito',sans-serif;width:100%;outline:none;}
+.menu-table input:focus{border-color:var(--teal);}
+.menu-cat-row td{background:var(--bg2);font-weight:800;font-size:13px;color:var(--dark2);padding:9px 10px;}
+
+/* SAVE BADGE */
+.save-badge{display:none;position:fixed;bottom:24px;right:20px;background:linear-gradient(135deg,var(--teal),var(--green));color:white;border-radius:50px;padding:12px 22px;font-size:14px;font-weight:800;box-shadow:0 6px 24px rgba(0,180,166,0.4);z-index:999;animation:slideUp .3s ease;}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+
+/* PW */
+.pw-change-wrap{background:rgba(255,179,0,0.1);border:1px solid rgba(255,179,0,0.3);border-radius:14px;padding:16px 18px;}
+.pw-change-title{font-size:13px;font-weight:800;color:var(--accent);margin-bottom:12px;}
+.danger-btn{background:var(--red);border:none;border-radius:10px;padding:10px 20px;color:white;font-size:13px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;}
+
+/* SECTION DIVIDER */
+.sec-div{font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--muted);padding:10px 0 6px;border-bottom:1px solid var(--border);margin-bottom:14px;}
+
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav>
+  <div class="nav-top">
+    <div class="nav-logo-area">
+      <!-- HOMES LOGO (nav) -->
+      <div class="nav-logo-img" id="nav-logo-wrap">
+        <img id="homes-logo-nav" alt="Karakaş Homes">
+      </div>
+      <div>
+        <div class="nav-brand">Karakaş Homes<span data-key="nav_sub">Laleli, İstanbul</span></div>
+      </div>
+    </div>
+    <div class="lang-scroll">
+      <button class="lang-btn active" onclick="setLang('tr')">TR</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('de')">DE</button>
+      <button class="lang-btn" onclick="setLang('ar')">AR</button>
+      <button class="lang-btn" onclick="setLang('ru')">RU</button>
+      <button class="lang-btn" onclick="setLang('es')">ES</button>
+    </div>
+  </div>
+  <div class="nav-pages">
+    <button class="page-btn active" onclick="setPage('home')" id="pb-home">🏠 <span data-key="nav_home">Daire</span></button>
+    <button class="page-btn" onclick="setPage('area')" id="pb-area">🗺 <span data-key="nav_area">Çevre & Ulaşım</span></button>
+    <button class="page-btn" onclick="setPage('restaurant')" id="pb-rest">🥟 <span data-key="nav_rest">Restoran</span></button>
+    <button class="page-btn" onclick="setPage('about')" id="pb-about">👤 <span data-key="nav_about">Biz Kimiz</span></button>
+  </div>
+</nav>
+
+<!-- ══════════ PAGE: HOME ══════════ -->
+<div class="page active" id="page-home">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="logo-wrap">
+      <div class="logo-circle" id="hero-logo-wrap">
+        <img id="homes-logo-hero" alt="Karakaş Homes">
+        <div class="logo-icon" style="display:none;">🏠</div>
+        <div class="logo-txt" style="display:none;" data-key="logo_homes">Logo Yükle</div>
+      </div>
+    </div>
+    <div class="hero-eyebrow" data-key="hero_eyebrow">Hoş Geldiniz · İstanbul, Laleli</div>
+    <div class="hero-title"><em>Karakaş</em> Homes</div>
+    <div class="hero-sub" data-key="hero_sub">Tarihin kalbinde, evinizin sıcaklığında. Güzel bir konaklama dileriz.</div>
+    <div class="chips">
+      <span class="chip" data-key="chip1">📍 Laleli</span>
+      <span class="chip" data-key="chip2">🕌 Sultanahmet 15dk</span>
+      <span class="chip" data-key="chip3">🛒 Kapalı Çarşı 10dk</span>
+    </div>
+    <div class="hero-links">
+      <a href="https://maps.google.com/?q=Laleli+Istanbul" target="_blank" class="hero-link-btn" id="home-maps-btn">📍 <span data-key="maps_btn">Google Maps'te Gör</span></a>
+      <a href="https://instagram.com/INSTAGRAM_HESABINIZ" target="_blank" class="hero-link-btn" id="home-ig-btn">📸 Instagram</a>
+    </div>
+  </div>
+
+  <!-- AD ZONE 1 — BANNER (üst) -->
+  <div style="padding:16px 16px 0;max-width:700px;margin:0 auto;">
+    <a href="AFFILIATE_LINK_1" target="_blank" class="ad-banner" id="ad-home-top">
+      <div class="ad-banner-icon">🎯</div>
+      <div class="ad-banner-text">
+        <div class="ad-banner-label">Sponsorlu / Affiliate</div>
+        <div class="ad-banner-title" data-key="ad1_title">Özel Teklif Başlığı</div>
+        <div class="ad-banner-sub" data-key="ad1_sub">Buraya kısa açıklama veya indirim kodu yazın</div>
+      </div>
+      <div class="ad-banner-arrow">›</div>
+    </a>
+    <div class="ad-edit-hint">↑ href="AFFILIATE_LINK_1" alanını kendi linkinizle değiştirin</div>
+  </div>
+
+  <!-- PHOTO GALLERY -->
+  <div class="section" style="padding-bottom:0;">
+    <div class="sec-label" data-key="gallery_label">Daire Fotoğrafları</div>
+    <div class="sec-title" data-key="gallery_title">Fotoğraf Galerisi</div>
+    <div class="sec-rule"></div>
+  </div>
+  <div class="gallery-wrap">
+    <div class="gallery-slider" id="gallery-slider">
+      <!-- Slides filled by JS -->
+    </div>
+    <div class="gallery-dots" id="gallery-dots"></div>
+  </div>
+
+  <!-- AD ZONE 2 — CARDS (orta) -->
+  <div style="padding:16px 16px 0;max-width:700px;margin:0 auto;">
+    <div class="ad-cards-row">
+      <a href="AFFILIATE_LINK_2" target="_blank" class="ad-card" id="ad-home-mid-l">
+        <div class="ad-card-icon">🛎</div>
+        <div class="ad-card-label">Affiliate</div>
+        <div class="ad-card-title" data-key="ad2a_title">Hizmet / Ürün</div>
+        <div class="ad-card-sub" data-key="ad2a_sub">Kısa açıklama</div>
+      </a>
+      <a href="AFFILIATE_LINK_3" target="_blank" class="ad-card" id="ad-home-mid-r">
+        <div class="ad-card-icon">✈️</div>
+        <div class="ad-card-label">Affiliate</div>
+        <div class="ad-card-title" data-key="ad2b_title">Hizmet / Ürün</div>
+        <div class="ad-card-sub" data-key="ad2b_sub">Kısa açıklama</div>
+      </a>
+    </div>
+    <div class="ad-edit-hint">↑ href alanlarını kendi affiliate linklerinizle değiştirin</div>
+  </div>
+
+  <div class="section">
+    <div class="sec-label" data-key="apt_label">Daireniz</div>
+    <div class="sec-title" data-key="apt_title">Eviniz İstanbul'da</div>
+    <div class="sec-rule"></div>
+    <div class="sec-text" data-key="apt_desc">Laleli'nin tarihi dokusunda, her şeye yürüme mesafesinde konumlanan dairemize hoş geldiniz.</div>
+    <div class="feat-grid">
+      <div class="feat-card"><span class="feat-icon">🛏</span><div class="feat-title" data-key="ft1">Yatak Odası</div><div class="feat-body" data-key="fb1">Çift kişilik konforlu yatak, bol dolap, karanlık stor perde.</div></div>
+      <div class="feat-card"><span class="feat-icon">🍳</span><div class="feat-title" data-key="ft2">Mutfak</div><div class="feat-body" data-key="fb2">Tam donanımlı mutfak, çay & kahve, buzdolabı.</div></div>
+      <div class="feat-card"><span class="feat-icon">📶</span><div class="feat-title" data-key="ft3">Wi-Fi</div><div class="feat-body" data-key="fb3">Yüksek hız. Şifre: <b>karakas2024</b></div></div>
+      <div class="feat-card"><span class="feat-icon">🧺</span><div class="feat-title" data-key="ft4">Çamaşır</div><div class="feat-body" data-key="fb4">Çamaşır makinesi mevcut. Deterjan dolaptadır.</div></div>
+    </div>
+  </div>
+
+  <!-- HARİTA -->
+  <div class="section" style="padding-top:0;">
+    <div class="map-card">
+      <div class="map-card-head">
+        <div class="map-card-icon">📍</div>
+        <div class="map-card-title" data-key="map_title">Konumumuz</div>
+      </div>
+      <div id="apt-map"></div>
+      <div class="map-hint" data-key="map_hint">📌 Haritada konumumuzu işaretleyin — admin panelinden koordinat güncelleyebilirsiniz</div>
+      <div class="map-actions">
+        <a href="https://maps.google.com/?q=Laleli+Istanbul" target="_blank" class="map-action-btn primary" id="map-gmaps-btn">
+          📍 <span data-key="open_maps">Google Maps'te Aç</span>
+        </a>
+        <a href="https://maps.google.com/?q=Laleli+Istanbul&dirflg=w" target="_blank" class="map-action-btn" id="map-directions-btn">
+          🚶 <span data-key="get_directions">Yol Tarifi Al</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="stripe">
+  <div class="section">
+    <div class="sec-label" data-key="ci_label">Giriş & Çıkış</div>
+    <div class="sec-title" data-key="ci_title">Check-in / Check-out</div>
+    <div class="sec-rule"></div>
+    <div class="info-card">
+      <div class="info-row"><div class="info-icon-wrap">🔑</div><div><div class="info-label" data-key="l_in">Giriş Saati</div><div class="info-value">14:00 – 22:00</div><div class="info-note" data-key="n_in">Farklı saat için lütfen önceden bildiriniz.</div></div></div>
+      <div class="info-row"><div class="info-icon-wrap">🚪</div><div><div class="info-label" data-key="l_out">Çıkış Saati</div><div class="info-value">11:00</div><div class="info-note" data-key="n_out">Geç çıkış için lütfen iletişime geçiniz.</div></div></div>
+      <div class="info-row"><div class="info-icon-wrap">📍</div><div>
+        <div class="info-label" data-key="l_addr">Adres</div>
+        <div class="info-value" data-key="v_addr">Laleli, İstanbul</div>
+        <div class="info-note" data-key="n_addr">Kesin adres rezervasyon onayında gönderilir.</div>
+        <a href="https://maps.google.com/?q=Laleli+Istanbul" target="_blank" class="info-link" id="addr-maps-link">📍 <span data-key="open_maps">Haritada Gör</span></a>
+      </div></div>
+      <div class="info-row"><div class="info-icon-wrap">📞</div><div><div class="info-label" data-key="l_host">Ev Sahibi</div><div class="info-value">+90 5XX XXX XX XX</div><div class="info-note" data-key="n_host">WhatsApp'tan da ulaşabilirsiniz.</div></div></div>
+    </div>
+  </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-label" data-key="r_label">Lütfen Okuyunuz</div>
+    <div class="sec-title" data-key="r_title">Ev Kuralları</div>
+    <div class="sec-rule"></div>
+    <div class="rules-card">
+      <div class="rules-head"><div class="rules-head-icon">🏡</div><div class="rules-head-title" data-key="r_box">Karakaş Homes Kuralları</div></div>
+      <div class="rule-item"><div class="rule-num">1</div><div class="rule-text" data-key="rule1">Sigara içmek kesinlikle yasaktır. Balkonda da sigara içilmemektedir.</div></div>
+      <div class="rule-item"><div class="rule-num">2</div><div class="rule-text" data-key="rule2">Evcil hayvan kabul edilmemektedir.</div></div>
+      <div class="rule-item"><div class="rule-num">3</div><div class="rule-text" data-key="rule3">Gürültülü müzik ve parti düzenlenmesi yasaktır. Saat 22:00'den sonra sessizlik.</div></div>
+      <div class="rule-item"><div class="rule-num">4</div><div class="rule-text" data-key="rule4">Rezervasyonda belirtilen kişi sayısını aşmayınız.</div></div>
+      <div class="rule-item"><div class="rule-num">5</div><div class="rule-text" data-key="rule5">Çıkışta mutfağı temiz bırakınız, çöpleri lütfen atınız.</div></div>
+      <div class="rule-item"><div class="rule-num">6</div><div class="rule-text" data-key="rule6">Kapı anahtarını kaybetmeyiniz. Kayıp durumunda ücret talep edilecektir.</div></div>
+    </div>
+  </div>
+
+  <!-- AD ZONE 3 — BANNER (alt) -->
+  <div style="padding:0 16px 20px;max-width:700px;margin:0 auto;">
+    <a href="AFFILIATE_LINK_4" target="_blank" class="ad-banner" id="ad-home-bot">
+      <div class="ad-banner-icon">🌟</div>
+      <div class="ad-banner-text">
+        <div class="ad-banner-label">Sponsorlu / Affiliate</div>
+        <div class="ad-banner-title" data-key="ad3_title">Özel Teklif Başlığı</div>
+        <div class="ad-banner-sub" data-key="ad3_sub">Buraya açıklama yazın</div>
+      </div>
+      <div class="ad-banner-arrow">›</div>
+    </a>
+    <div class="ad-edit-hint">↑ href="AFFILIATE_LINK_4" alanını kendi linkinizle değiştirin</div>
+  </div>
+
+  <footer><div class="footer-brand">Karakaş Homes – İstanbul</div><div class="footer-copy" data-key="f1">Harika bir konaklama dileriz ✦</div></footer>
+</div>
+
+<!-- ══════════ PAGE: AREA ══════════ -->
+<div class="page" id="page-area">
+  <div class="hero">
+    <div class="hero-eyebrow" data-key="a_eyebrow">Laleli & İstanbul</div>
+    <div class="hero-title">Çevre <em>Rehberi</em></div>
+    <div class="hero-sub" data-key="a_sub">Tarihin her adımda hissedildiği bu şehirde keşfedecekleriniz sizi bekliyor.</div>
+    <div class="hero-links">
+      <a href="https://maps.google.com/?q=Laleli+Istanbul" target="_blank" class="hero-link-btn">📍 <span data-key="maps_btn">Google Maps'te Gör</span></a>
+    </div>
+  </div>
+
+  <!-- AD ZONE 1 -->
+  <div style="padding:16px 16px 0;max-width:700px;margin:0 auto;">
+    <a href="AFFILIATE_LINK_TOUR" target="_blank" class="ad-banner">
+      <div class="ad-banner-icon">🗺</div>
+      <div class="ad-banner-text">
+        <div class="ad-banner-label">Affiliate / Tur</div>
+        <div class="ad-banner-title" data-key="ad_tour_title">İstanbul Tur Rezervasyonu</div>
+        <div class="ad-banner-sub" data-key="ad_tour_sub">GetYourGuide, Viator vb. affiliate linkinizi buraya ekleyin</div>
+      </div>
+      <div class="ad-banner-arrow">›</div>
+    </a>
+    <div class="ad-edit-hint">↑ href="AFFILIATE_LINK_TOUR" alanını kendi linkinizle değiştirin</div>
+  </div>
+
+  <div class="section">
+    <div class="sec-label" data-key="pl_label">Yürüme Mesafesinde</div>
+    <div class="sec-title" data-key="pl_title">Gezilecek Yerler</div>
+    <div class="sec-rule"></div>
+    <div class="attr-card"><div class="attr-dist" data-key="d1">~10 dk</div><div><div class="attr-name" data-key="p1n">Kapalı Çarşı</div><div class="attr-desc" data-key="p1d">4.000+ dükkan; mücevher, halı, baharatlar. Pzt–Cmt 08:30–19:00.</div></div></div>
+    <div class="attr-card"><div class="attr-dist" data-key="d2">~15 dk</div><div><div class="attr-name" data-key="p2n">Sultanahmet Camii</div><div class="attr-desc" data-key="p2d">Altı minareli İstanbul ikonu. İznik çinileri. Uygun kıyafet gereklidir.</div></div></div>
+    <div class="attr-card"><div class="attr-dist" data-key="d3">~18 dk</div><div><div class="attr-name" data-key="p3n">Ayasofya</div><div class="attr-desc" data-key="p3d">Bin yılı aşkın tarih, Bizans mozaikleri ve muhteşem kubbe.</div></div></div>
+    <div class="attr-card"><div class="attr-dist" data-key="d4">~20 dk</div><div><div class="attr-name" data-key="p4n">Mısır Çarşısı</div><div class="attr-desc" data-key="p4d">Rengarenk baharat ve şekerleme dükkânları. Hediyelik alışveriş için ideal.</div></div></div>
+    <div class="attr-card"><div class="attr-dist" data-key="d5">~22 dk</div><div><div class="attr-name" data-key="p5n">Topkapı Sarayı</div><div class="attr-desc" data-key="p5d">Osmanlı'nın 400 yıllık kalbi. Hazine, harem ve Boğaz manzarası.</div></div></div>
+    <div class="attr-card"><div class="attr-dist" data-key="d6">~5 dk</div><div><div class="attr-name" data-key="p6n">Laleli Camii</div><div class="attr-desc" data-key="p6d">18. yüzyıl Osmanlı şaheseri. Sessiz ve etkileyici atmosfer.</div></div></div>
+  </div>
+
+  <!-- AD ZONE 2 -->
+  <div style="padding:0 16px;max-width:700px;margin:0 auto;">
+    <div class="ad-cards-row">
+      <a href="AFFILIATE_LINK_MUSEUM" target="_blank" class="ad-card">
+        <div class="ad-card-icon">🏛</div>
+        <div class="ad-card-label">Affiliate</div>
+        <div class="ad-card-title" data-key="ad_mus_title">Müze Bileti</div>
+        <div class="ad-card-sub" data-key="ad_mus_sub">Online bilet affiliate linki</div>
+      </a>
+      <a href="AFFILIATE_LINK_TRANSPORT" target="_blank" class="ad-card">
+        <div class="ad-card-icon">🚌</div>
+        <div class="ad-card-label">Affiliate</div>
+        <div class="ad-card-title" data-key="ad_tr_title">Ulaşım</div>
+        <div class="ad-card-sub" data-key="ad_tr_sub">Transfer / ulaşım affiliate</div>
+      </a>
+    </div>
+    <div class="ad-edit-hint">↑ href alanlarını kendi linklerinizle değiştirin</div>
+  </div>
+
+  <div class="stripe">
+  <div class="section">
+    <div class="sec-label" data-key="tr_label">İstanbul'da Hareket</div>
+    <div class="sec-title" data-key="tr_title">Ulaşım</div>
+    <div class="sec-rule"></div>
+    <div class="tr-card tr-teal">
+      <div class="tr-head"><div class="tr-icon">🚇</div><div class="tr-name" data-key="metro">Metro & Tramvay</div></div>
+      <div class="tr-item"><span class="tr-lbl" data-key="m1">Laleli-Üniversite Durağı</span><span class="tr-val" data-key="m1v">2 dk yürüyüş</span></div>
+      <div class="tr-item"><span class="tr-lbl" data-key="m2">Sultanahmet (T1)</span><span class="tr-val" data-key="m2v">3 durak</span></div>
+      <div class="tr-item"><span class="tr-lbl" data-key="m3">Eminönü – Vapur</span><span class="tr-val" data-key="m3v">5 durak</span></div>
+      <div class="tr-item"><span class="tr-lbl" data-key="m4">Sirkeci Marmaray</span><span class="tr-val" data-key="m4v">10 dk yürüyüş</span></div>
+    </div>
+    <div class="tr-card tr-blue">
+      <div class="tr-head"><div class="tr-icon">✈️</div><div class="tr-name" data-key="air">Havalimanları</div></div>
+      <div class="tr-item"><span class="tr-lbl" data-key="a1">İstanbul Havalimanı (IST)</span><span class="tr-val" data-key="a1v">~45 dk</span></div>
+      <div class="tr-item"><span class="tr-lbl" data-key="a2">Sabiha Gökçen (SAW)</span><span class="tr-val" data-key="a2v">~60 dk</span></div>
+    </div>
+    <div class="tr-card tr-green">
+      <div class="tr-head"><div class="tr-icon">🚕</div><div class="tr-name" data-key="taxi">Taksi & Uygulamalar</div></div>
+      <div class="tr-item"><span class="tr-lbl" data-key="t1">BiTaksi (önerilen)</span><span class="tr-val">App Store / Play</span></div>
+      <div class="tr-item"><span class="tr-lbl">Uber</span><span class="tr-val" data-key="t2">Mevcut</span></div>
+    </div>
+    <div class="feat-card" style="margin-top:4px;"><span class="feat-icon">💳</span><div class="feat-title" data-key="ik_t">İstanbulkart</div><div class="feat-body" data-key="ik_b">Metro, tramvay, otobüs ve vapurda geçerli. Laleli durağındaki makinelerden alabilirsiniz.</div></div>
+  </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-label" data-key="em_label">Önemli Numaralar</div>
+    <div class="sec-title" data-key="em_title">Acil & İletişim</div>
+    <div class="sec-rule"></div>
+    <div class="emerg-grid" style="margin-bottom:14px;">
+      <div class="emerg-card"><div class="emerg-label" data-key="e1">Polis</div><div class="emerg-num">155</div></div>
+      <div class="emerg-card"><div class="emerg-label" data-key="e2">Ambulans</div><div class="emerg-num">112</div></div>
+      <div class="emerg-card"><div class="emerg-label" data-key="e3">İtfaiye</div><div class="emerg-num">110</div></div>
+      <div class="emerg-card"><div class="emerg-label" data-key="e4">Sahil Güvenlik</div><div class="emerg-num">158</div></div>
+    </div>
+    <div class="feat-card"><span class="feat-icon">🏥</span><div class="feat-title" data-key="hosp_t">En Yakın Hastane</div><div class="feat-body" data-key="hosp_b">İstanbul Üniversitesi Çapa Tıp Fakültesi — 10 dk yürüyüş. Nöbetçi eczane: <b>182</b> veya Google Maps.</div></div>
+  </div>
+
+  <!-- AD ZONE 3 -->
+  <div style="padding:0 16px 20px;max-width:700px;margin:0 auto;">
+    <a href="AFFILIATE_LINK_AREA_BOT" target="_blank" class="ad-banner">
+      <div class="ad-banner-icon">🎪</div>
+      <div class="ad-banner-text">
+        <div class="ad-banner-label">Sponsorlu</div>
+        <div class="ad-banner-title" data-key="ad_area_bot_title">Etkinlik / Aktivite</div>
+        <div class="ad-banner-sub" data-key="ad_area_bot_sub">Affiliate linkinizi buraya ekleyin</div>
+      </div>
+      <div class="ad-banner-arrow">›</div>
+    </a>
+    <div class="ad-edit-hint">↑ href="AFFILIATE_LINK_AREA_BOT" alanını kendi linkinizle değiştirin</div>
+  </div>
+
+  <footer><div class="footer-brand">Karakaş Homes – İstanbul</div><div class="footer-copy" data-key="f2">Keyifli bir keşif dileriz ✦</div></footer>
+</div>
+
+<!-- ══════════ PAGE: RESTAURANT ══════════ -->
+<div class="page" id="page-restaurant">
+  <div class="rest-hero">
+    <!-- RESTORAN LOGOSU — AYRI -->
+    <div class="logo-wrap" style="position:relative;z-index:2;">
+      <div class="rest-logo-circle" id="rest-logo-wrap">
+        <img id="rest-logo-hero" alt="Hakkı Karakaş Mantı">
+      </div>
+    </div>
+    <div class="rest-badge" data-key="rb">Otantik Türk Mutfağı · İstanbul</div>
+    <div class="rest-name">Hakkı Karakaş<br>Mantı</div>
+    <div class="rest-sub" data-key="rs">Geleneksel lezzetler, samimi atmosfer</div>
+    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px;position:relative;z-index:2;">
+      <a href="https://view.qrall.co/tr?tenantId=3a16eb18-c92d-78b7-0d17-3ff13a32944b&channelId=3a16eb18-d04e-e145-2295-a23e9982394e" target="_blank" rel="noopener" class="menu-btn">
+        <span>📋</span><span data-key="mb">Dijital Menüyü Gör</span><span>→</span>
+      </a>
+      <a href="https://maps.google.com/maps?q=Hakkı+Karakaş+Mantı+Esentepe+Mahallesi+Tevfik+Erdönmez+Paşa+Sokak+Şişli+İstanbul" target="_blank" class="hero-link-btn" style="margin-top:0;">📍 <span data-key="rest_maps">Haritada Gör</span></a>
+      <a href="https://instagram.com/RESTORAN_INSTAGRAM" target="_blank" class="hero-link-btn" style="margin-top:0;">📸 Instagram</a>
+    </div>
+  </div>
+
+  <!-- AD ZONE 1 -->
+  <div style="padding:16px 16px 0;max-width:700px;margin:0 auto;">
+    <a href="AFFILIATE_LINK_FOOD" target="_blank" class="ad-banner">
+      <div class="ad-banner-icon">🍽</div>
+      <div class="ad-banner-text">
+        <div class="ad-banner-label">Affiliate / Sponsor</div>
+        <div class="ad-banner-title" data-key="ad_food_title">Yemek & İçecek Teklifi</div>
+        <div class="ad-banner-sub" data-key="ad_food_sub">Affiliate linkinizi buraya ekleyin</div>
+      </div>
+      <div class="ad-banner-arrow">›</div>
+    </a>
+    <div class="ad-edit-hint">↑ href="AFFILIATE_LINK_FOOD" alanını kendi linkinizle değiştirin</div>
+  </div>
+
+  <div class="section">
+    <div class="offer-banner">
+      <div class="offer-icon">🎁</div>
+      <div><div class="offer-title" data-key="of_t">Misafirlerimize Özel</div><div class="offer-body" data-key="of_b">Karakaş Homes misafiri olduğunuzu söyleyin — çay veya Türk kahvesi ikramımızdır!</div></div>
+    </div>
+
+    <div class="sec-label" data-key="ra_label">Hakkımızda</div>
+    <div class="sec-title" data-key="ra_title">Restoranımız</div>
+    <div class="sec-rule"></div>
+    <div class="sec-text" data-key="ra_desc">Hakkı Karakaş Mantı, geleneksel Türk mantı sanatını yaşatmak amacıyla kurulmuştur. El açması hamur ve nefis soslarımızla her tabak bir ustalık eseridir.</div>
+
+
+    <!-- DAİREDEN RESTORANA ULAŞIM -->
+    <div class="route-card">
+      <div class="route-head">
+        <div class="route-icon">🚶</div>
+        <div>
+          <div class="route-title" data-key="route_title">Daireden Restorana</div>
+          <div class="route-subtitle" data-key="route_sub">Yaklaşık 15 dakika yürüyüş</div>
+        </div>
+      </div>
+      <div class="route-steps">
+        <div class="route-step">
+          <div class="route-step-num">1</div>
+          <div class="route-step-body">
+            <div class="route-step-title" data-key="rs1_t">Laleli'den çıkın</div>
+            <div class="route-step-desc" data-key="rs1_d">Ordu Caddesi'ne yürüyün, tramvay durağına doğru ilerleyin</div>
+          </div>
+          <div class="route-step-time">2 dk</div>
+        </div>
+        <div class="route-step">
+          <div class="route-step-num">2</div>
+          <div class="route-step-body">
+            <div class="route-step-title" data-key="rs2_t">T1 Tramvayına binin</div>
+            <div class="route-step-desc" data-key="rs2_d">Laleli-Üniversite durağından Osmanbey yönünde tramvaya binin</div>
+          </div>
+          <div class="route-step-time">5 dk</div>
+        </div>
+        <div class="route-step">
+          <div class="route-step-num">3</div>
+          <div class="route-step-body">
+            <div class="route-step-title" data-key="rs3_t">Varışa yakın yürüyüş</div>
+            <div class="route-step-desc" data-key="rs3_d">Esentepe Mahallesi, Tevfik Erdönmez Paşa Sokak — Emekli Subay Evleri 18. Blok No:10</div>
+          </div>
+          <div class="route-step-time">8 dk</div>
+        </div>
+      </div>
+      <div class="route-btns">
+        <a href="https://maps.google.com/maps?q=Hakkı+Karakaş+Mantı+Esentepe+Şişli+Istanbul&dirflg=w" target="_blank" class="route-btn route-btn-primary">
+          🗺 <span data-key="route_maps_btn">Haritada Gör</span>
+        </a>
+        <a href="https://maps.google.com/maps?saddr=Laleli+Istanbul&daddr=Esentepe+Tevfik+Erdönmez+Paşa+Sokak+Şişli+Istanbul" target="_blank" class="route-btn route-btn-secondary">
+          🚶 <span data-key="route_dir_btn">Yol Tarifi Al</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="info-card" style="margin-bottom:22px;">
+      <div class="info-row"><div class="info-icon-wrap">📍</div><div>
+        <div class="info-label" data-key="ra_al">Adres</div>
+        <div class="info-value" data-key="ra_av">Esentepe Mah., Tevfik Erdönmez Paşa Sok. No:10, Şişli</div>
+        <div class="info-note" data-key="ra_an">Dairenize 5 dakika yürüme mesafesinde</div>
+        <a href="https://maps.google.com/maps?q=Hakkı+Karakaş+Mantı+Esentepe+Mahallesi+Tevfik+Erdönmez+Paşa+Sokak+Şişli+İstanbul" target="_blank" class="info-link">📍 <span data-key="open_maps">Haritada Gör</span></a>
+      </div></div>
+      <div class="info-row"><div class="info-icon-wrap">🕐</div><div><div class="info-label" data-key="ra_hl">Çalışma Saatleri</div><div class="info-value" data-key="ra_hv">Her gün 10:00 – 22:00</div></div></div>
+      <div class="info-row"><div class="info-icon-wrap">📞</div><div><div class="info-label" data-key="ra_pl">Rezervasyon</div><div class="info-value">+90 5XX XXX XX XX</div></div></div>
+    </div>
+
+    <!-- AD ZONE 2 — MID -->
+    <div class="ad-cards-row" style="margin-bottom:20px;">
+      <a href="AFFILIATE_LINK_REST_MID_L" target="_blank" class="ad-card">
+        <div class="ad-card-icon">🧴</div>
+        <div class="ad-card-label">Affiliate</div>
+        <div class="ad-card-title" data-key="ad_rm_l_title">Ürün / Hizmet</div>
+        <div class="ad-card-sub" data-key="ad_rm_l_sub">Kısa açıklama</div>
+      </a>
+      <a href="AFFILIATE_LINK_REST_MID_R" target="_blank" class="ad-card">
+        <div class="ad-card-icon">🎁</div>
+        <div class="ad-card-label">Affiliate</div>
+        <div class="ad-card-title" data-key="ad_rm_r_title">Ürün / Hizmet</div>
+        <div class="ad-card-sub" data-key="ad_rm_r_sub">Kısa açıklama</div>
+      </a>
+    </div>
+    <div class="ad-edit-hint" style="margin-bottom:16px;">↑ href alanlarını kendi linklerinizle değiştirin</div>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:16px;">
+      <div><div class="sec-label" data-key="menu_label">Lezzetlerimiz</div><div class="sec-title" data-key="menu_title">Menü</div><div class="sec-rule"></div></div>
+    </div>
+
+
+    <div class="menu-sec-title"><div class="menu-sec-icon">🥟</div><span data-key="cat1">Mantı Çeşitleri</span><div class="menu-divider"></div></div>
+    <div class="menu-row"><div class="mi-img-placeholder" onclick="uploadMenuImg(this,'mn1')" title="Görsel ekle">🍽</div><div class="mi-content"><div class="mi-name" data-key="mn1">Kayseri Mantısı</div><div class="mi-desc" data-key="md1">El açması, sarımsaklı yoğurt, kırmızı biber tereyağı</div></div><div class="mi-price">₺180</div></div>
+    <div class="menu-row"><div class="mi-img-placeholder" onclick="uploadMenuImg(this,'mn2')" title="Görsel ekle">🍽</div><div class="mi-content"><div class="mi-name" data-key="mn2">Sulu Mantı</div><div class="mi-desc" data-key="md2">Et suyunda pişirilmiş, yoğurt, kuru nane, pul biber</div></div><div class="mi-price">₺160</div></div>
+    <div class="menu-row"><div class="mi-img-placeholder" onclick="uploadMenuImg(this,'mn3')" title="Görsel ekle">🍽</div><div class="mi-content"><div class="mi-name" data-key="mn3">Çökelek Mantısı</div><div class="mi-desc" data-key="md3">Çökelek peyniri dolgulu, domates sosu, taze nane</div></div><div class="mi-price">₺170</div></div>
+    <div class="menu-row"><div class="mi-img-placeholder" onclick="uploadMenuImg(this,'mn4')" title="Görsel ekle">🍽</div><div class="mi-content"><div class="mi-name" data-key="mn4">Ihlama Mantısı</div><div class="mi-desc" data-key="md4">Ispanaklı hamur, peynir dolgu, zeytinyağı sos</div></div><div class="mi-price">₺185</div></div>
+
+    <div class="menu-sec-title"><div class="menu-sec-icon">🍲</div><span data-key="cat2">Çorbalar</span><div class="menu-divider"></div></div>
+    <div class="menu-row"><div class="mi-img-placeholder" onclick="uploadMenuImg(this,'sn1')" title="Görsel ekle">🍽</div><div class="mi-content"><div class="mi-name" data-key="sn1">Mercimek Çorbası</div><div class="mi-desc" data-key="sd1">Kırmızı mercimek, limon, tereyağlı biber</div></div><div class="mi-price">₺80</div></div>
+    <div class="menu-row"><div class="mi-img-placeholder" onclick="uploadMenuImg(this,'sn2')" title="Görsel ekle">🍽</div><div class="mi-content"><div class="mi-name" data-key="sn2">Yayla Çorbası</div><div class="mi-desc" data-key="sd2">Yoğurt, pirinç, nane — Anadolu tarifi</div></div><div class="mi-price">₺85</div></div>
+
+    <div class="menu-sec-title"><div class="menu-sec-icon">🥗</div><span data-key="cat3">Mezeler & Salatalar</span><div class="menu-divider"></div></div>
+    <div class="menu-row"><div class="mi-img-placeholder" onclick="uploadMenuImg(this,'sin1')" title="Görsel ekle">🍽</div><div class="mi-content"><div class="mi-name" data-key="sin1">Cacık</div><div class="mi-desc" data-key="sid1">Süzme yoğurt, salatalık, sarımsak, dereotu</div></div><div class="mi-price">₺65</div></div>
+    <div class="menu-row"><div class="mi-img-placeholder" onclick="uploadMenuImg(this,'sin2')" title="Görsel ekle">🍽</div><div class="mi-content"><div class="mi-name" data-key="sin2">Acılı Ezme</div><div class="mi-desc" data-key="sid2">Domates, biber, soğan, maydanoz — ev yapımı</div></div><div class="mi-price">₺60</div></div>
+    <div class="menu-row"><div class="mi-img-placeholder" onclick="uploadMenuImg(this,'sin3')" title="Görsel ekle">🍽</div><div class="mi-content"><div class="mi-name" data-key="sin3">Çoban Salatası</div><div class="mi-desc" data-key="sid3">Taze domates, salatalık, biber, limon</div></div><div class="mi-price">₺70</div></div>
+
+    <div class="menu-sec-title"><div class="menu-sec-icon">☕</div><span data-key="cat4">İçecekler</span><div class="menu-divider"></div></div>
+    <div class="menu-row"><div class="mi-img-placeholder" onclick="uploadMenuImg(this,'dn1')" title="Görsel ekle">🍽</div><div class="mi-content"><div class="mi-name" data-key="dn1">Çay</div></div><div class="mi-price">₺25</div></div>
+    <div class="menu-row"><div class="mi-img-placeholder" onclick="uploadMenuImg(this,'dn2')" title="Görsel ekle">🍽</div><div class="mi-content"><div class="mi-name" data-key="dn2">Türk Kahvesi</div></div><div class="mi-price">₺45</div></div>
+    <div class="menu-row"><div class="mi-img-placeholder" onclick="uploadMenuImg(this,'dn3')" title="Görsel ekle">🍽</div><div class="mi-content"><div class="mi-name" data-key="dn3">Ayran</div></div><div class="mi-price">₺35</div></div>
+    <div class="menu-row"><div class="mi-img-placeholder" onclick="uploadMenuImg(this,'dn4')" title="Görsel ekle">🍽</div><div class="mi-content"><div class="mi-name" data-key="dn4">Limonata</div></div><div class="mi-price">₺55</div></div>
+
+    <div class="menu-sec-title"><div class="menu-sec-icon">🍮</div><span data-key="cat5">Tatlılar</span><div class="menu-divider"></div></div>
+    <div class="menu-row"><div class="mi-img-placeholder" onclick="uploadMenuImg(this,'den1')" title="Görsel ekle">🍽</div><div class="mi-content"><div class="mi-name" data-key="den1">Baklava</div><div class="mi-desc" data-key="ded1">Fıstıklı, tereyağlı şerbetli, 2 dilim</div></div><div class="mi-price">₺120</div></div>
+    <div class="menu-row"><div class="mi-img-placeholder" onclick="uploadMenuImg(this,'den2')" title="Görsel ekle">🍽</div><div class="mi-content"><div class="mi-name" data-key="den2">Sütlaç</div><div class="mi-desc" data-key="ded2">Fırında pişirilmiş geleneksel pirinç sütlacı</div></div><div class="mi-price">₺90</div></div>
+
+    <div style="text-align:center;margin:24px 0 8px;">
+      <a href="https://view.qrall.co/tr?tenantId=3a16eb18-c92d-78b7-0d17-3ff13a32944b&channelId=3a16eb18-d04e-e145-2295-a23e9982394e" target="_blank" rel="noopener" class="menu-btn">
+        <span>📋</span><span data-key="mb">Dijital Menüyü Gör</span><span>→</span>
+      </a>
+      <p style="font-size:12px;color:var(--muted);margin-top:8px;" data-key="mh">Tam menü, fiyatlar ve güncel ürünler için tıklayınız</p>
+    </div>
+  </div>
+
+  <!-- AD ZONE 3 -->
+  <div style="padding:0 16px 4px;max-width:700px;margin:0 auto;">
+    <a href="AFFILIATE_LINK_REST_BOT" target="_blank" class="ad-banner">
+      <div class="ad-banner-icon">🛍</div>
+      <div class="ad-banner-text">
+        <div class="ad-banner-label">Sponsorlu</div>
+        <div class="ad-banner-title" data-key="ad_rest_bot_title">Özel Teklif</div>
+        <div class="ad-banner-sub" data-key="ad_rest_bot_sub">Affiliate linkinizi buraya ekleyin</div>
+      </div>
+      <div class="ad-banner-arrow">›</div>
+    </a>
+    <div class="ad-edit-hint" style="margin-bottom:8px;">↑ href="AFFILIATE_LINK_REST_BOT" alanını kendi linkinizle değiştirin</div>
+  </div>
+
+  <div class="contact-strip">
+    <div class="contact-grid">
+      <div class="contact-item"><div class="contact-label" data-key="c1l">Adres</div><div class="contact-value" data-key="c1v">Laleli, İstanbul</div></div>
+      <div class="contact-item"><div class="contact-label" data-key="c2l">Telefon</div><div class="contact-value">+90 5XX XXX XX XX</div></div>
+      <div class="contact-item"><div class="contact-label" data-key="c3l">Saatler</div><div class="contact-value" data-key="c3v">10:00 – 22:00</div></div>
+      <div class="contact-item"><div class="contact-label" data-key="c4l">Uzaklık</div><div class="contact-value" data-key="c4v">5 dk yürüyüş</div></div>
+    </div>
+  </div>
+  <footer><div class="footer-brand">Hakkı Karakaş Mantı</div><div class="footer-copy" data-key="f3">Afiyet olsun ✦</div></footer>
+</div>
+
+<!-- ══════════ PAGE: BİZ KİMİZ ══════════ -->
+<div class="page" id="page-about">
+  <div class="about-hero">
+    <div class="hero-eyebrow" data-key="about_eyebrow">Karakaş Ailesi</div>
+    <div class="hero-title" style="font-size:clamp(28px,8vw,52px);">Biz <em data-key="about_title_em">Kimiz?</em></div>
+    <div class="hero-sub" data-key="about_sub">Size en iyi konaklamayı sunmak için buradayız. Ailemizin hikayesini keşfedin.</div>
+  </div>
+
+  <div class="section">
+
+    <!-- Profil Kartı -->
+    <div class="person-card">
+      <div class="person-photo-wrap" id="person-photo-area">
+        <img id="person-img-1" alt="">
+        <div class="person-photo-placeholder" id="person-ph-1">
+          <div class="pp-icon">👤</div>
+          <div class="pp-txt" data-key="photo_hint">Fotoğraf yüklemek için tıklayın</div>
+        </div>
+        <div class="person-photo-overlay">
+          <div>
+            <div class="person-name-badge" id="person-name-1" data-key="p1_name">Ad Soyad</div>
+            <div class="person-role-badge" id="person-role-1" data-key="p1_role">Rol / Ünvan</div>
+          </div>
+        </div>
+      </div>
+      <div class="person-body">
+        <div class="person-bio" id="person-bio-1" data-key="p1_bio">Admin panelinden kendinizi tanıtın. Geçmişiniz, hayalleriniz, misafirlerinize vermek istediğiniz mesaj...</div>
+        <div class="person-socials">
+          <a href="#" class="person-social-btn" id="person-ig-1" style="display:none;">📸 Instagram</a>
+          <a href="#" class="person-social-btn" id="person-wa-1" style="display:none;">💬 WhatsApp</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-label" data-key="values_label" style="text-align:center;">Neden Biz?</div>
+    <div class="sec-title" data-key="values_title" style="text-align:center;">Değerlerimiz</div>
+    <div style="width:36px;height:3px;margin:8px auto 16px;background:linear-gradient(90deg,var(--teal),var(--green));border-radius:4px;margin:8px 0 16px;"></div>
+    <div class="about-values">
+      <div class="about-value-card"><div class="about-value-icon">❤️</div><div class="about-value-title" data-key="val1_t">Samimi Misafirperverlik</div><div class="about-value-text" data-key="val1_b">Her misafirimize evimizin sıcaklığını hissettiriyoruz.</div></div>
+      <div class="about-value-card"><div class="about-value-icon">✨</div><div class="about-value-title" data-key="val2_t">Kalite & Temizlik</div><div class="about-value-text" data-key="val2_b">Dairemiz her konuktan önce özenle hazırlanır.</div></div>
+      <div class="about-value-card"><div class="about-value-icon">📍</div><div class="about-value-title" data-key="val3_t">Mükemmel Konum</div><div class="about-value-text" data-key="val3_b">Tarihin kalbinde, her şeye yürüme mesafesinde.</div></div>
+      <div class="about-value-card"><div class="about-value-icon">🤝</div><div class="about-value-title" data-key="val4_t">7/24 Destek</div><div class="about-value-text" data-key="val4_b">İhtiyacınızda her zaman yanınızdayız.</div></div>
+    </div>
+  </div><!-- /section -->
+
+  <footer><div class="footer-brand">Karakaş Ailesi</div><div class="footer-copy" data-key="f_about">Sizi aramızda görmekten mutluluk duyuyoruz ✦</div></footer>
+</div>
+
+
+<script>
+/* ── TRANSLATIONS (abbreviated for space, full 6-lang) ── */
+const T={
+tr:{nav_sub:"Laleli, İstanbul",nav_home:"Daire",nav_area:"Çevre & Ulaşım",nav_rest:"Restoran",nav_about:"Biz Kimiz",logo_homes:"Logo Yükle",logo_rest:"Restoran Logosu Yükle",hero_eyebrow:"Hoş Geldiniz · İstanbul, Laleli",hero_sub:"Tarihin kalbinde, evinizin sıcaklığında. Güzel bir konaklama dileriz.",chip1:"📍 Laleli",chip2:"🕌 Sultanahmet 15dk",chip3:"🛒 Kapalı Çarşı 10dk",maps_btn:"Google Maps'te Gör",map_title:"Konumumuz",map_hint:"📌 Konuma tıklayarak Google Maps'te açabilirsiniz",open_maps:"Google Maps'te Aç",get_directions:"Yol Tarifi Al",route_title:"Daireden Restorana",route_sub:"Yaklaşık 15 dakika",rs1_t:"Laleli'den çıkın",rs1_d:"Ordu Caddesi'ne yürüyün",rs2_t:"T1 Tramvayına binin",rs2_d:"Laleli-Üniversite durağından tramvaya binin",rs3_t:"Varışa yakın yürüyüş",rs3_d:"Esentepe Mah., Tevfik Erdönmez Paşa Sok. No:10",route_maps_btn:"Haritada Gör",route_dir_btn:"Yol Tarifi Al",rest_maps:"Haritada Gör",open_maps:"Haritada Gör",gallery_label:"Daire Fotoğrafları",gallery_title:"Fotoğraf Galerisi",ad1_title:"Özel Teklif Başlığı",ad1_sub:"Buraya açıklama yazın",ad2a_title:"Hizmet / Ürün",ad2a_sub:"Kısa açıklama",ad2b_title:"Hizmet / Ürün",ad2b_sub:"Kısa açıklama",ad3_title:"Özel Teklif Başlığı",ad3_sub:"Buraya açıklama yazın",ad_tour_title:"İstanbul Tur Rezervasyonu",ad_tour_sub:"GetYourGuide, Viator vb.",ad_mus_title:"Müze Bileti",ad_mus_sub:"Online bilet affiliate",ad_tr_title:"Ulaşım",ad_tr_sub:"Transfer affiliate",ad_area_bot_title:"Etkinlik / Aktivite",ad_area_bot_sub:"Affiliate linkinizi ekleyin",ad_food_title:"Yemek & İçecek",ad_food_sub:"Affiliate linkinizi ekleyin",ad_rm_l_title:"Ürün / Hizmet",ad_rm_l_sub:"Kısa açıklama",ad_rm_r_title:"Ürün / Hizmet",ad_rm_r_sub:"Kısa açıklama",ad_rest_bot_title:"Özel Teklif",ad_rest_bot_sub:"Affiliate linkinizi ekleyin",apt_label:"Daireniz",apt_title:"Eviniz İstanbul'da",apt_desc:"Laleli'nin tarihi dokusunda, her şeye yürüme mesafesinde konumlanan dairemize hoş geldiniz.",ft1:"Yatak Odası",fb1:"Çift kişilik konforlu yatak, bol dolap, karanlık stor perde.",ft2:"Mutfak",fb2:"Tam donanımlı mutfak, çay & kahve, buzdolabı.",ft3:"Wi-Fi",fb3:"Yüksek hız. Şifre: <b>karakas2024</b>",ft4:"Çamaşır",fb4:"Çamaşır makinesi mevcut.",ci_label:"Giriş & Çıkış",ci_title:"Check-in / Check-out",l_in:"Giriş Saati",n_in:"Farklı saat için lütfen önceden bildiriniz.",l_out:"Çıkış Saati",n_out:"Geç çıkış için lütfen iletişime geçiniz.",l_addr:"Adres",v_addr:"Laleli, İstanbul",n_addr:"Kesin adres rezervasyon onayında.",l_host:"Ev Sahibi",n_host:"WhatsApp'tan da ulaşabilirsiniz.",r_label:"Lütfen Okuyunuz",r_title:"Ev Kuralları",r_box:"Karakaş Homes Kuralları",rule1:"Sigara içmek kesinlikle yasaktır. Balkonda da sigara içilmemektedir.",rule2:"Evcil hayvan kabul edilmemektedir.",rule3:"Gürültülü müzik ve parti yasaktır. Saat 22:00'den sonra sessizlik.",rule4:"Rezervasyonda belirtilen kişi sayısını aşmayınız.",rule5:"Çıkışta mutfağı temiz bırakınız, çöpleri atınız.",rule6:"Kapı anahtarını kaybetmeyiniz. Kayıp durumunda ücret talep edilir.",f1:"Harika bir konaklama dileriz ✦",a_eyebrow:"Laleli & İstanbul",a_sub:"Tarihin her adımda hissedildiği bu şehirde keşfedecekleriniz sizi bekliyor.",pl_label:"Yürüme Mesafesinde",pl_title:"Gezilecek Yerler",d1:"~10 dk",p1n:"Kapalı Çarşı",p1d:"4.000+ dükkan. Pzt–Cmt 08:30–19:00.",d2:"~15 dk",p2n:"Sultanahmet Camii",p2d:"Altı minareli İstanbul ikonu. İznik çinileri.",d3:"~18 dk",p3n:"Ayasofya",p3d:"Bin yılı aşkın tarih, Bizans mozaikleri.",d4:"~20 dk",p4n:"Mısır Çarşısı",p4d:"Baharatlar ve hediyeler.",d5:"~22 dk",p5n:"Topkapı Sarayı",p5d:"400 yıllık Osmanlı mirası. Boğaz manzarası.",d6:"~5 dk",p6n:"Laleli Camii",p6d:"18. yüzyıl Osmanlı şaheseri.",tr_label:"İstanbul'da Hareket",tr_title:"Ulaşım",metro:"Metro & Tramvay",m1:"Laleli-Üniversite Durağı",m1v:"2 dk yürüyüş",m2:"Sultanahmet (T1)",m2v:"3 durak",m3:"Eminönü – Vapur",m3v:"5 durak",m4:"Sirkeci Marmaray",m4v:"10 dk yürüyüş",air:"Havalimanları",a1:"İstanbul Havalimanı (IST)",a1v:"~45 dk",a2:"Sabiha Gökçen (SAW)",a2v:"~60 dk",taxi:"Taksi & Uygulamalar",t1:"BiTaksi (önerilen)",t2:"Mevcut",ik_t:"İstanbulkart",ik_b:"Metro, tramvay, otobüs ve vapurda geçerli.",em_label:"Önemli Numaralar",em_title:"Acil & İletişim",e1:"Polis",e2:"Ambulans",e3:"İtfaiye",e4:"Sahil Güvenlik",hosp_t:"En Yakın Hastane",hosp_b:"Çapa Tıp Fakültesi — 10 dk. Nöbetçi eczane: <b>182</b>.",f2:"Keyifli bir keşif dileriz ✦",rb:"Otantik Türk Mutfağı · İstanbul",rs:"Geleneksel lezzetler, samimi atmosfer",mb:"Dijital Menüyü Gör",mb2:"Tam Menü",of_t:"Misafirlerimize Özel",of_b:"Karakaş Homes misafiri olduğunuzu söyleyin — çay veya Türk kahvesi ikramımızdır!",ra_label:"Hakkımızda",ra_title:"Restoranımız",ra_desc:"El açması hamur ve nefis soslarımızla her tabak bir ustalık eseridir.",ra_al:"Adres",ra_av:"Laleli, İstanbul",ra_an:"Dairenize 5 dakika yürüme mesafesinde",ra_hl:"Çalışma Saatleri",ra_hv:"Her gün 10:00 – 22:00",ra_pl:"Rezervasyon",menu_label:"Lezzetlerimiz",menu_title:"Menü",mh:"Tam menü için tıklayınız",qrdos_label:"Dijital Menü",qrdos_title:"Tam Menüyü Gör",cat1:"Mantı Çeşitleri",cat2:"Çorbalar",cat3:"Mezeler & Salatalar",cat4:"İçecekler",cat5:"Tatlılar",mn1:"Kayseri Mantısı",md1:"El açması, sarımsaklı yoğurt, kırmızı biber tereyağı",mn2:"Sulu Mantı",md2:"Et suyunda, yoğurt, nane, pul biber",mn3:"Çökelek Mantısı",md3:"Çökelek peyniri, domates sosu, nane",mn4:"Ihlama Mantısı",md4:"Ispanaklı hamur, peynir, zeytinyağı sos",sn1:"Mercimek Çorbası",sd1:"Kırmızı mercimek, limon, biber",sn2:"Yayla Çorbası",sd2:"Yoğurt, pirinç, nane",sin1:"Cacık",sid1:"Yoğurt, salatalık, sarımsak, dereotu",sin2:"Acılı Ezme",sid2:"Domates, biber, soğan, maydanoz",sin3:"Çoban Salatası",sid3:"Domates, salatalık, biber, limon",dn1:"Çay",dn2:"Türk Kahvesi",dn3:"Ayran",dn4:"Limonata",den1:"Baklava",ded1:"Fıstıklı, şerbetli, 2 dilim",den2:"Sütlaç",ded2:"Fırında pirinç sütlacı",c1l:"Adres",c1v:"Laleli, İstanbul",c2l:"Telefon",c3l:"Saatler",c3v:"10:00 – 22:00",c4l:"Uzaklık",c4v:"5 dk yürüyüş",f3:"Afiyet olsun ✦",about_eyebrow:"Karakaş Ailesi",about_title_em:"Kimiz?",about_sub:"Size en iyi konaklamayı sunmak için buradayız.",photo_hint:"Fotoğraf yüklemek için tıklayın",p1_name:"Ad Soyad",p1_role:"Ev Sahibi",p1_bio:"Kendinizi tanıtın...",p2_name:"Ad Soyad",p2_role:"Eş Sahibi",p2_bio:"Kendinizi tanıtın...",values_label:"Neden Biz?",values_title:"Değerlerimiz",val1_t:"Samimi Misafirperverlik",val1_b:"Her misafirimize evimizin sıcaklığını hissettiriyoruz.",val2_t:"Kalite & Temizlik",val2_b:"Dairemiz her konuktan önce özenle hazırlanır.",val3_t:"Mükemmel Konum",val3_b:"Tarihin kalbinde, her şeye yürüme mesafesinde.",val4_t:"7/24 Destek",val4_b:"İhtiyacınızda her zaman yanınızdayız.",f_about:"Sizi aramızda görmekten mutluluk duyuyoruz ✦"},
+en:{nav_sub:"Laleli, Istanbul",nav_home:"Apartment",nav_area:"Area & Transport",nav_rest:"Restaurant",nav_about:"About Us",logo_homes:"Upload Logo",logo_rest:"Upload Restaurant Logo",hero_eyebrow:"Welcome · Istanbul, Laleli",hero_sub:"In the heart of history, with the warmth of home.",chip1:"📍 Laleli",chip2:"🕌 Sultanahmet 15min",chip3:"🛒 Grand Bazaar 10min",maps_btn:"View on Google Maps",map_title:"Our Location",map_hint:"📌 Tap to open in Google Maps",open_maps:"Open in Google Maps",get_directions:"Get Directions",route_title:"From Apartment to Restaurant",route_sub:"About 15 minutes walk",rs1_t:"Leave Laleli",rs1_d:"Walk to Ordu Caddesi toward the tram stop",rs2_t:"Take T1 Tram",rs2_d:"Board from Laleli-Üniversite toward Osmanbey",rs3_t:"Short walk on arrival",rs3_d:"Esentepe Mah., Tevfik Erdönmez Paşa Sok. No:10",route_maps_btn:"View on Map",route_dir_btn:"Get Directions",rest_maps:"View on Map",open_maps:"View on Map",gallery_label:"Apartment Photos",gallery_title:"Photo Gallery",ad1_title:"Special Offer Title",ad1_sub:"Add your description here",ad2a_title:"Service / Product",ad2a_sub:"Short description",ad2b_title:"Service / Product",ad2b_sub:"Short description",ad3_title:"Special Offer Title",ad3_sub:"Add your description here",ad_tour_title:"Istanbul Tour Booking",ad_tour_sub:"GetYourGuide, Viator etc.",ad_mus_title:"Museum Tickets",ad_mus_sub:"Online ticket affiliate",ad_tr_title:"Transport",ad_tr_sub:"Transfer affiliate",ad_area_bot_title:"Events / Activities",ad_area_bot_sub:"Add your affiliate link",ad_food_title:"Food & Drink Offer",ad_food_sub:"Add your affiliate link",ad_rm_l_title:"Product / Service",ad_rm_l_sub:"Short description",ad_rm_r_title:"Product / Service",ad_rm_r_sub:"Short description",ad_rest_bot_title:"Special Offer",ad_rest_bot_sub:"Add your affiliate link",apt_label:"Your Apartment",apt_title:"Your Home in Istanbul",apt_desc:"Welcome to our apartment in the historic heart of Laleli.",ft1:"Bedroom",fb1:"Comfortable double bed, spacious wardrobe, blackout blinds.",ft2:"Kitchen",fb2:"Fully equipped, tea & coffee, refrigerator.",ft3:"Wi-Fi",fb3:"High speed. Password: <b>karakas2024</b>",ft4:"Laundry",fb4:"Washing machine available.",ci_label:"Arrival & Departure",ci_title:"Check-in / Check-out",l_in:"Check-in",n_in:"Please inform us in advance for a different time.",l_out:"Check-out",n_out:"Contact us for late check-out.",l_addr:"Address",v_addr:"Laleli, Istanbul",n_addr:"Exact address in booking confirmation.",l_host:"Host",n_host:"Also reachable on WhatsApp.",r_label:"Please Read",r_title:"House Rules",r_box:"Karakaş Homes Rules",rule1:"Smoking strictly prohibited, including balcony.",rule2:"Pets are not allowed.",rule3:"Loud music and parties prohibited. Quiet after 22:00.",rule4:"Do not exceed the number of guests in reservation.",rule5:"Leave kitchen clean and dispose of rubbish.",rule6:"Do not lose the door key. Fee charged for lost keys.",f1:"We wish you a wonderful stay ✦",a_eyebrow:"Laleli & Istanbul",a_sub:"A city where history lives around every corner.",pl_label:"Within Walking Distance",pl_title:"Sights & Attractions",d1:"~10 min",p1n:"Grand Bazaar",p1d:"4,000+ shops. Mon–Sat 08:30–19:00.",d2:"~15 min",p2n:"Blue Mosque",p2d:"Six minarets, Iznik tiles. Appropriate dress required.",d3:"~18 min",p3n:"Hagia Sophia",p3d:"Over a millennium of history. Byzantine mosaics.",d4:"~20 min",p4n:"Spice Bazaar",p4d:"Spices and sweets. Perfect for souvenirs.",d5:"~22 min",p5n:"Topkapi Palace",p5d:"400-year Ottoman legacy. Bosphorus views.",d6:"~5 min",p6n:"Laleli Mosque",p6d:"Elegant 18th-century Ottoman masterpiece.",tr_label:"Getting Around",tr_title:"Transport",metro:"Metro & Tram",m1:"Laleli-Üniversite Stop",m1v:"2 min walk",m2:"Sultanahmet (T1)",m2v:"3 stops",m3:"Eminönü – Ferry",m3v:"5 stops",m4:"Sirkeci Marmaray",m4v:"10 min walk",air:"Airports",a1:"Istanbul Airport (IST)",a1v:"~45 min",a2:"Sabiha Gökçen (SAW)",a2v:"~60 min",taxi:"Taxi & Apps",t1:"BiTaksi (recommended)",t2:"Available",ik_t:"İstanbulkart",ik_b:"Valid on all public transport.",em_label:"Important Numbers",em_title:"Emergency",e1:"Police",e2:"Ambulance",e3:"Fire",e4:"Coast Guard",hosp_t:"Nearest Hospital",hosp_b:"Çapa University Hospital — 10 min. Pharmacy: <b>182</b>.",f2:"Enjoy your explorations ✦",rb:"Authentic Turkish Cuisine · Istanbul",rs:"Traditional flavours, warm hospitality",mb:"View Digital Menu",mb2:"Full Menu",of_t:"A Gift for Our Guests",of_b:"Tell us you're staying at Karakaş Homes — tea or Turkish coffee on us!",ra_label:"About Us",ra_title:"Our Restaurant",ra_desc:"Hand-rolled dough and exquisite sauces — every plate is a work of craft.",ra_al:"Address",ra_av:"Laleli, Istanbul",ra_an:"5 minutes walk from your apartment",ra_hl:"Opening Hours",ra_hv:"Every day 10:00 – 22:00",ra_pl:"Reservations",menu_label:"Our Flavours",menu_title:"Menu",mh:"Click for full menu and prices",qrdos_label:"Digital Menu",qrdos_title:"View Full Menu",cat1:"Manti Varieties",cat2:"Soups",cat3:"Mezze & Salads",cat4:"Drinks",cat5:"Desserts",mn1:"Kayseri Mantı",md1:"Hand-rolled, garlic yoghurt, red pepper butter",mn2:"Sulu Mantı",md2:"Meat broth, yoghurt, mint, chilli",mn3:"Çökelek Mantısı",md3:"Cottage cheese, tomato sauce, mint",mn4:"Ihlama Mantısı",md4:"Spinach dough, ricotta, olive oil",sn1:"Red Lentil Soup",sd1:"Lentils, lemon, pepper butter",sn2:"Yayla Soup",sd2:"Yoghurt, rice, mint",sin1:"Cacık",sid1:"Yoghurt, cucumber, garlic, dill",sin2:"Spicy Ezme",sid2:"Tomato, pepper, onion, parsley",sin3:"Shepherd's Salad",sid3:"Tomato, cucumber, pepper, lemon",dn1:"Turkish Tea",dn2:"Turkish Coffee",dn3:"Ayran",dn4:"Lemonade",den1:"Baklava",ded1:"Pistachio, syrup, 2 slices",den2:"Sütlaç",ded2:"Oven-baked rice pudding",c1l:"Address",c1v:"Laleli, Istanbul",c2l:"Phone",c3l:"Hours",c3v:"10:00 – 22:00",c4l:"Distance",c4v:"5 min walk",f3:"Enjoy your meal ✦",about_eyebrow:"The Karakaş Family",about_title_em:"Who Are We?",about_sub:"We're here to give you the best possible stay.",photo_hint:"Click to upload photo",p1_name:"Full Name",p1_role:"Host",p1_bio:"Introduce yourself here...",p2_name:"Full Name",p2_role:"Co-Host",p2_bio:"Introduce yourself here...",values_label:"Why Us?",values_title:"Our Values",val1_t:"Genuine Hospitality",val1_b:"We make every guest feel at home.",val2_t:"Quality & Cleanliness",val2_b:"The apartment is carefully prepared before every stay.",val3_t:"Prime Location",val3_b:"In the heart of history, walking distance to everything.",val4_t:"24/7 Support",val4_b:"We're always here when you need us.",f_about:"We're delighted to have you with us ✦"},
+de:{nav_sub:"Laleli, Istanbul",nav_home:"Wohnung",nav_area:"Umgebung",nav_rest:"Restaurant",nav_about:"About Us",logo_homes:"Logo hochladen",logo_rest:"Restaurant-Logo hochladen",hero_eyebrow:"Willkommen · Istanbul, Laleli",hero_sub:"Im Herzen der Geschichte, mit der Wärme eines Zuhauses.",chip1:"📍 Laleli",chip2:"🕌 Sultanahmet 15min",chip3:"🛒 Großer Basar 10min",maps_btn:"Google Maps",rest_maps:"Auf Karte",open_maps:"Auf Karte",gallery_label:"Wohnungsfotos",gallery_title:"Fotogalerie",ad1_title:"Angebots-Titel",ad1_sub:"Beschreibung hier",ad2a_title:"Dienst / Produkt",ad2a_sub:"Kurzbeschreibung",ad2b_title:"Dienst / Produkt",ad2b_sub:"Kurzbeschreibung",ad3_title:"Angebots-Titel",ad3_sub:"Beschreibung hier",ad_tour_title:"Istanbul Touren",ad_tour_sub:"GetYourGuide, Viator usw.",ad_mus_title:"Museumticket",ad_mus_sub:"Online-Ticket Affiliate",ad_tr_title:"Transport",ad_tr_sub:"Transfer Affiliate",ad_area_bot_title:"Events / Aktivitäten",ad_area_bot_sub:"Affiliate-Link hinzufügen",ad_food_title:"Essen & Trinken",ad_food_sub:"Affiliate-Link hinzufügen",ad_rm_l_title:"Produkt / Dienst",ad_rm_l_sub:"Kurzbeschreibung",ad_rm_r_title:"Produkt / Dienst",ad_rm_r_sub:"Kurzbeschreibung",ad_rest_bot_title:"Sonderangebot",ad_rest_bot_sub:"Affiliate-Link hinzufügen",apt_label:"Ihre Wohnung",apt_title:"Ihr Zuhause in Istanbul",apt_desc:"Willkommen in Laleli, zu Fuß überall hin.",ft1:"Schlafzimmer",fb1:"Doppelbett, Schrank, Verdunkelungsrollos.",ft2:"Küche",fb2:"Voll ausgestattet, Tee & Kaffee.",ft3:"WLAN",fb3:"Hochgeschwindigkeit. Passwort: <b>karakas2024</b>",ft4:"Wäsche",fb4:"Waschmaschine vorhanden.",ci_label:"An- & Abreise",ci_title:"Check-in / Check-out",l_in:"Check-in",n_in:"Bitte bei abweichender Zeit mitteilen.",l_out:"Check-out",n_out:"Kontakt für spätes Auschecken.",l_addr:"Adresse",v_addr:"Laleli, Istanbul",n_addr:"Genaue Adresse in Buchungsbestätigung.",l_host:"Gastgeber",n_host:"Auch per WhatsApp.",r_label:"Bitte lesen",r_title:"Hausregeln",r_box:"Karakaş Homes Regeln",rule1:"Rauchen verboten, auch Balkon.",rule2:"Haustiere nicht erlaubt.",rule3:"Laute Musik/Partys verboten. Nachtruhe ab 22:00.",rule4:"Gästeanzahl nicht überschreiten.",rule5:"Küche sauber hinterlassen.",rule6:"Schlüssel nicht verlieren.",f1:"Schönen Aufenthalt ✦",a_eyebrow:"Laleli & Istanbul",a_sub:"Eine Stadt, in der Geschichte an jeder Ecke lebt.",pl_label:"Zu Fuß",pl_title:"Sehenswürdigkeiten",d1:"~10 Min",p1n:"Großer Basar",p1d:"4.000+ Geschäfte. Mo–Sa 08:30–19:00.",d2:"~15 Min",p2n:"Blaue Moschee",p2d:"Sechs Minarette, Iznik-Kacheln.",d3:"~18 Min",p3n:"Hagia Sophia",p3d:"1000+ Jahre Geschichte.",d4:"~20 Min",p4n:"Gewürzbasar",p4d:"Gewürze und Süßigkeiten.",d5:"~22 Min",p5n:"Topkapi-Palast",p5d:"Osmanisches Erbe, Bosphorus.",d6:"~5 Min",p6n:"Laleli-Moschee",p6d:"18. Jh. osmanisches Meisterwerk.",tr_label:"Transport",tr_title:"Unterwegs",metro:"U-Bahn & Straßenbahn",m1:"Haltestelle Laleli-Üniversite",m1v:"2 Min",m2:"Sultanahmet (T1)",m2v:"3 Stationen",m3:"Eminönü – Fähre",m3v:"5 Stationen",m4:"Sirkeci Marmaray",m4v:"10 Min",air:"Flughäfen",a1:"Istanbul (IST)",a1v:"~45 Min",a2:"Sabiha Gökçen (SAW)",a2v:"~60 Min",taxi:"Taxi",t1:"BiTaksi (empfohlen)",t2:"Verfügbar",ik_t:"İstanbulkart",ik_b:"Gültig auf allen öff. Verkehrsmitteln.",em_label:"Wichtige Nummern",em_title:"Notfall",e1:"Polizei",e2:"Krankenwagen",e3:"Feuerwehr",e4:"Küstenwache",hosp_t:"Nächstes Krankenhaus",hosp_b:"Çapa Klinikum — 10 Min. Apotheke: <b>182</b>.",f2:"Viel Spaß ✦",rb:"Authentische türkische Küche",rs:"Traditionelle Aromen",mb:"Speisekarte",mb2:"Vollständig",of_t:"Geschenk",of_b:"Sagen Sie, Sie wohnen im Karakaş Homes — Tee oder Kaffee gratis!",ra_label:"Über uns",ra_title:"Restaurant",ra_desc:"Handgemachte Manti mit köstlichen Saucen.",ra_al:"Adresse",ra_av:"Laleli, Istanbul",ra_an:"5 Min zu Fuß",ra_hl:"Öffnungszeiten",ra_hv:"Täglich 10:00–22:00",ra_pl:"Reservierung",menu_label:"Speisen",menu_title:"Speisekarte",mh:"Vollständige Karte",qrdos_label:"Digitale Karte",qrdos_title:"Vollständige Karte ansehen",cat1:"Manti",cat2:"Suppen",cat3:"Meze & Salate",cat4:"Getränke",cat5:"Desserts",mn1:"Kayseri Mantı",md1:"Handgemacht, Knoblauchjoghurt",mn2:"Sulu Mantı",md2:"Fleischbrühe, Joghurt, Minze",mn3:"Çökelek Mantısı",md3:"Hüttenkäse, Tomatensauce",mn4:"Ihlama Mantısı",md4:"Spinatteig, Ricotta",sn1:"Linsensuppe",sd1:"Rote Linsen, Zitrone",sn2:"Yayla-Suppe",sd2:"Joghurt, Reis, Minze",sin1:"Cacık",sid1:"Joghurt, Gurke, Dill",sin2:"Würzige Ezme",sid2:"Tomate, Paprika, Zwiebel",sin3:"Hirtensalat",sid3:"Tomate, Gurke, Paprika",dn1:"Tee",dn2:"Türk. Kaffee",dn3:"Ayran",dn4:"Limonade",den1:"Baklava",ded1:"Pistazie, Sirup",den2:"Sütlaç",ded2:"Milchreis",c1l:"Adresse",c1v:"Laleli, Istanbul",c2l:"Telefon",c3l:"Zeiten",c3v:"10:00–22:00",c4l:"Entfernung",c4v:"5 Min",f3:"Guten Appetit ✦",about_eyebrow:"Die Karakaş Familie",about_title_em:"Wer sind wir?",about_sub:"Wir sind für Ihren besten Aufenthalt da.",photo_hint:"Zum Hochladen klicken",p1_name:"Vor- und Nachname",p1_role:"Gastgeber",p1_bio:"Stellen Sie sich hier vor...",p2_name:"Vor- und Nachname",p2_role:"Gastgeberin",p2_bio:"Stellen Sie sich hier vor...",values_label:"Warum wir?",values_title:"Unsere Werte",val1_t:"Echte Gastfreundschaft",val1_b:"Jeder Gast fühlt sich wie zu Hause.",val2_t:"Qualität & Sauberkeit",val2_b:"Sorgfältig vorbereitet vor jedem Aufenthalt.",val3_t:"Top-Lage",val3_b:"Im Herzen der Geschichte, alles zu Fuß erreichbar.",val4_t:"24/7 Support",val4_b:"Wir sind immer für Sie da.",f_about:"Schön, Sie bei uns zu haben ✦"},
+ar:{nav_sub:"لالالي، إسطنبول",nav_home:"الشقة",nav_area:"المنطقة",nav_rest:"المطعم",nav_about:"من نحن",logo_homes:"رفع الشعار",logo_rest:"شعار المطعم",hero_eyebrow:"مرحباً · إسطنبول، لالالي",hero_sub:"في قلب التاريخ، بدفء المنزل.",chip1:"📍 لالالي",chip2:"🕌 15د",chip3:"🛒 البازار 10د",maps_btn:"خرائط جوجل",rest_maps:"على الخريطة",open_maps:"على الخريطة",gallery_label:"صور الشقة",gallery_title:"معرض الصور",ad1_title:"عنوان العرض",ad1_sub:"أضف وصفك هنا",ad2a_title:"خدمة / منتج",ad2a_sub:"وصف قصير",ad2b_title:"خدمة / منتج",ad2b_sub:"وصف قصير",ad3_title:"عنوان العرض",ad3_sub:"وصفك هنا",ad_tour_title:"جولات إسطنبول",ad_tour_sub:"GetYourGuide, Viator",ad_mus_title:"تذاكر المتاحف",ad_mus_sub:"رابط التابع",ad_tr_title:"المواصلات",ad_tr_sub:"رابط النقل",ad_area_bot_title:"فعاليات",ad_area_bot_sub:"رابطك هنا",ad_food_title:"طعام وشراب",ad_food_sub:"رابطك هنا",ad_rm_l_title:"منتج / خدمة",ad_rm_l_sub:"وصف",ad_rm_r_title:"منتج / خدمة",ad_rm_r_sub:"وصف",ad_rest_bot_title:"عرض خاص",ad_rest_bot_sub:"رابطك هنا",apt_label:"شقتكم",apt_title:"منزلكم في إسطنبول",apt_desc:"مرحباً في لالالي.",ft1:"غرفة النوم",fb1:"سرير مزدوج، خزانة، ستائر.",ft2:"المطبخ",fb2:"مجهز، شاي وقهوة.",ft3:"واي فاي",fb3:"سريع. الرمز: <b>karakas2024</b>",ft4:"الغسيل",fb4:"غسالة متاحة.",ci_label:"الوصول والمغادرة",ci_title:"تسجيل الوصول / المغادرة",l_in:"الوصول",n_in:"يرجى الإخطار مسبقاً.",l_out:"المغادرة",n_out:"تواصلوا للمغادرة المتأخرة.",l_addr:"العنوان",v_addr:"لالالي، إسطنبول",n_addr:"العنوان الدقيق مع تأكيد الحجز.",l_host:"المضيف",n_host:"واتساب متاح.",r_label:"يرجى القراءة",r_title:"القواعد",r_box:"قواعد Karakaş Homes",rule1:"التدخين محظور.",rule2:"الحيوانات ممنوعة.",rule3:"الحفلات ممنوعة. هدوء بعد 22:00.",rule4:"لا تتجاوزوا عدد الضيوف.",rule5:"اتركوا المطبخ نظيفاً.",rule6:"حافظوا على المفتاح.",f1:"إقامة رائعة ✦",a_eyebrow:"لالالي وإسطنبول",a_sub:"مدينة يحيا فيها التاريخ.",pl_label:"قريب",pl_title:"المعالم",d1:"~10د",p1n:"البازار الكبير",p1d:"4000+ محل. الإثنين-السبت.",d2:"~15د",p2n:"الجامع الأزرق",p2d:"ست مآذن، بلاطات إزنيك.",d3:"~18د",p3n:"آيا صوفيا",p3d:"تاريخ بيزنطي.",d4:"~20د",p4n:"سوق البهارات",p4d:"توابل وهدايا.",d5:"~22د",p5n:"قصر طوبقابي",p5d:"التراث العثماني.",d6:"~5د",p6n:"جامع لالالي",p6d:"تحفة عثمانية.",tr_label:"التنقل",tr_title:"المواصلات",metro:"المترو والترام",m1:"محطة لالالي",m1v:"دقيقتان",m2:"سلطان أحمد (T1)",m2v:"3 محطات",m3:"أمينونو",m3v:"5 محطات",m4:"سيركجي",m4v:"10 دقائق",air:"المطارات",a1:"مطار إسطنبول",a1v:"~45د",a2:"صبيحة",a2v:"~60د",taxi:"التاكسي",t1:"BiTaksi",t2:"متوفر",ik_t:"İstanbulkart",ik_b:"صالحة لجميع وسائل النقل.",em_label:"أرقام مهمة",em_title:"الطوارئ",e1:"الشرطة",e2:"الإسعاف",e3:"الإطفاء",e4:"خفر السواحل",hosp_t:"أقرب مستشفى",hosp_b:"مستشفى جابا — 10 دقائق. صيدلية: <b>182</b>.",f2:"استمتعوا ✦",rb:"المطبخ التركي الأصيل",rs:"نكهات تقليدية",mb:"القائمة",mb2:"الكاملة",of_t:"هدية",of_b:"أخبرونا أنكم في Karakaş Homes — شاي أو قهوة مجاناً!",ra_label:"عن المطعم",ra_title:"مطعمنا",ra_desc:"فن المانتي التقليدي في كل طبق.",ra_al:"العنوان",ra_av:"لالالي، إسطنبول",ra_an:"5 دقائق من شقتكم",ra_hl:"ساعات العمل",ra_hv:"يومياً 10:00–22:00",ra_pl:"الحجز",menu_label:"أطباقنا",menu_title:"القائمة",mh:"انقر للقائمة الكاملة",qrdos_label:"القائمة الرقمية",qrdos_title:"عرض القائمة الكاملة",cat1:"أنواع المانتي",cat2:"الشوربات",cat3:"المازة",cat4:"المشروبات",cat5:"الحلويات",mn1:"مانتي قيصري",md1:"يدوية، لبن بالثوم",mn2:"مانتي بالمرق",md2:"مرق اللحم، لبن، نعناع",mn3:"مانتي الجبن",md3:"جبن، صلصة طماطم",mn4:"مانتي السبانخ",md4:"سبانخ، ريكوتا",sn1:"شوربة العدس",sd1:"عدس، ليمون",sn2:"شوربة يايلا",sd2:"لبن، أرز، نعناع",sin1:"جاجيك",sid1:"لبن، خيار، ثوم",sin2:"إيزمة",sid2:"طماطم، فلفل",sin3:"سلطة",sid3:"طماطم، خيار",dn1:"شاي",dn2:"قهوة تركية",dn3:"آيران",dn4:"ليمونادا",den1:"بقلاوة",ded1:"فستق وشراب",den2:"سوتلاش",ded2:"أرز باللبن",c1l:"العنوان",c1v:"لالالي، إسطنبول",c2l:"الهاتف",c3l:"الساعات",c3v:"10:00–22:00",c4l:"المسافة",c4v:"5 دقائق",f3:"بالهناء ✦",about_eyebrow:"عائلة كاراكاش",about_title_em:"من نحن؟",about_sub:"نحن هنا لنقدم لكم أفضل إقامة.",photo_hint:"انقر لرفع الصورة",p1_name:"الاسم الكامل",p1_role:"المضيف",p1_bio:"قدم نفسك هنا...",p2_name:"الاسم الكامل",p2_role:"المضيفة",p2_bio:"قدمي نفسك هنا...",values_label:"لماذا نحن؟",values_title:"قيمنا",val1_t:"ضيافة حقيقية",val1_b:"نجعل كل ضيف يشعر بالمنزل.",val2_t:"الجودة والنظافة",val2_b:"الشقة مُعدّة بعناية قبل كل إقامة.",val3_t:"موقع مثالي",val3_b:"في قلب التاريخ.",val4_t:"دعم 24/7",val4_b:"نحن دائماً في خدمتكم.",f_about:"يسعدنا وجودكم معنا ✦"},
+ru:{nav_sub:"Лалели, Стамбул",nav_home:"Квартира",nav_area:"Район",nav_rest:"Ресторан",nav_about:"О нас",logo_homes:"Загрузить логотип",logo_rest:"Логотип ресторана",hero_eyebrow:"Добро пожаловать · Стамбул",hero_sub:"В сердце истории, с теплом дома.",chip1:"📍 Лалели",chip2:"🕌 Султанахмет 15мин",chip3:"🛒 Базар 10мин",maps_btn:"Google Maps",rest_maps:"На карте",open_maps:"На карте",gallery_label:"Фото квартиры",gallery_title:"Фотогалерея",ad1_title:"Заголовок предложения",ad1_sub:"Описание здесь",ad2a_title:"Услуга / Продукт",ad2a_sub:"Краткое описание",ad2b_title:"Услуга / Продукт",ad2b_sub:"Краткое описание",ad3_title:"Заголовок предложения",ad3_sub:"Описание здесь",ad_tour_title:"Туры по Стамбулу",ad_tour_sub:"GetYourGuide, Viator",ad_mus_title:"Билеты в музей",ad_mus_sub:"Партнёрская ссылка",ad_tr_title:"Транспорт",ad_tr_sub:"Партнёрская ссылка",ad_area_bot_title:"Мероприятия",ad_area_bot_sub:"Ссылка сюда",ad_food_title:"Еда и напитки",ad_food_sub:"Ссылка сюда",ad_rm_l_title:"Продукт / Услуга",ad_rm_l_sub:"Описание",ad_rm_r_title:"Продукт / Услуга",ad_rm_r_sub:"Описание",ad_rest_bot_title:"Спецпредложение",ad_rest_bot_sub:"Ссылка сюда",apt_label:"Ваша квартира",apt_title:"Ваш дом в Стамбуле",apt_desc:"Добро пожаловать в Лалели.",ft1:"Спальня",fb1:"Двуспальная кровать, шкаф.",ft2:"Кухня",fb2:"Полностью оборудована.",ft3:"Wi-Fi",fb3:"Высокая скорость. Пароль: <b>karakas2024</b>",ft4:"Стирка",fb4:"Стиральная машина.",ci_label:"Заезд и выезд",ci_title:"Заезд / Выезд",l_in:"Заезд",n_in:"Предупредите заранее.",l_out:"Выезд",n_out:"Свяжитесь для позднего выезда.",l_addr:"Адрес",v_addr:"Лалели, Стамбул",n_addr:"Точный адрес в подтверждении.",l_host:"Хозяин",n_host:"WhatsApp доступен.",r_label:"Прочтите",r_title:"Правила",r_box:"Правила Karakaş Homes",rule1:"Курение запрещено.",rule2:"Животные запрещены.",rule3:"Вечеринки запрещены. Тишина после 22:00.",rule4:"Не превышайте число гостей.",rule5:"Оставьте кухню чистой.",rule6:"Не теряйте ключ.",f1:"Приятного пребывания ✦",a_eyebrow:"Лалели и Стамбул",a_sub:"Город, где история на каждом шагу.",pl_label:"Пешком",pl_title:"Достопримечательности",d1:"~10 мин",p1n:"Гранд-базар",p1d:"4000+ магазинов.",d2:"~15 мин",p2n:"Голубая мечеть",p2d:"Шесть минаретов.",d3:"~18 мин",p3n:"Собор Св. Софии",p3d:"1000 лет истории.",d4:"~20 мин",p4n:"Египетский базар",p4d:"Пряности и сувениры.",d5:"~22 мин",p5n:"Дворец Топкапы",p5d:"Османское наследие.",d6:"~5 мин",p6n:"Мечеть Лалели",p6d:"18 в. памятник.",tr_label:"Транспорт",tr_title:"Передвижение",metro:"Метро и трамвай",m1:"Остановка Лалели",m1v:"2 мин",m2:"Султанахмет (T1)",m2v:"3 остановки",m3:"Эминёню",m3v:"5 остановок",m4:"Сиркеджи",m4v:"10 мин",air:"Аэропорты",a1:"Аэропорт Стамбул",a1v:"~45 мин",a2:"Сабиха Гёкчен",a2v:"~60 мин",taxi:"Такси",t1:"BiTaksi",t2:"Доступен",ik_t:"İstanbulkart",ik_b:"Все виды транспорта.",em_label:"Экстренные",em_title:"Номера",e1:"Полиция",e2:"Скорая",e3:"Пожарная",e4:"Береговая охрана",hosp_t:"Больница",hosp_b:"Чапа — 10 мин. Аптека: <b>182</b>.",f2:"Приятных открытий ✦",rb:"Турецкая кухня",rs:"Традиционные вкусы",mb:"Меню",mb2:"Полное меню",of_t:"Подарок гостям",of_b:"Скажите, что живёте в Karakaş Homes — чай или кофе бесплатно!",ra_label:"О нас",ra_title:"Ресторан",ra_desc:"Ручная лепка манты — каждое блюдо шедевр.",ra_al:"Адрес",ra_av:"Лалели, Стамбул",ra_an:"5 минут от квартиры",ra_hl:"Часы работы",ra_hv:"Ежедневно 10:00–22:00",ra_pl:"Бронирование",menu_label:"Меню",menu_title:"Блюда",mh:"Полное меню",qrdos_label:"Цифровое меню",qrdos_title:"Открыть полное меню",cat1:"Виды манты",cat2:"Супы",cat3:"Закуски",cat4:"Напитки",cat5:"Десерты",mn1:"Кайсерийская манты",md1:"Ручная лепка, йогурт с чесноком",mn2:"Манты в бульоне",md2:"Бульон, йогурт, мята",mn3:"Манты с творогом",md3:"Творог, томатный соус",mn4:"Шпинатная манты",md4:"Шпинат, рикотта",sn1:"Суп из чечевицы",sd1:"Чечевица, лимон",sn2:"Суп яйла",sd2:"Йогурт, рис, мята",sin1:"Джаджик",sid1:"Йогурт, огурец, укроп",sin2:"Эзме острая",sid2:"Томат, перец",sin3:"Салат пастуха",sid3:"Томат, огурец",dn1:"Чай",dn2:"Турецкий кофе",dn3:"Айран",dn4:"Лимонад",den1:"Пахлава",ded1:"Фисташки, сироп",den2:"Сютлач",ded2:"Рисовый пудинг",c1l:"Адрес",c1v:"Лалели, Стамбул",c2l:"Телефон",c3l:"Часы",c3v:"10:00–22:00",c4l:"Расстояние",c4v:"5 мин",f3:"Приятного аппетита ✦",about_eyebrow:"Семья Каракаш",about_title_em:"Кто мы?",about_sub:"Мы здесь, чтобы подарить вам лучший отдых.",photo_hint:"Нажмите для загрузки фото",p1_name:"Имя Фамилия",p1_role:"Хозяин",p1_bio:"Расскажите о себе здесь...",p2_name:"Имя Фамилия",p2_role:"Хозяйка",p2_bio:"Расскажите о себе здесь...",values_label:"Почему мы?",values_title:"Наши ценности",val1_t:"Настоящее гостеприимство",val1_b:"Каждый гость чувствует себя как дома.",val2_t:"Качество и чистота",val2_b:"Квартира тщательно подготовлена перед каждым заездом.",val3_t:"Отличное расположение",val3_b:"В самом сердце истории.",val4_t:"Поддержка 24/7",val4_b:"Мы всегда рядом.",f_about:"Рады видеть вас у нас ✦"},
+es:{nav_sub:"Laleli, Estambul",nav_home:"Apartamento",nav_area:"Zona",nav_rest:"Restaurante",nav_about:"Quiénes somos",logo_homes:"Subir logo",logo_rest:"Logo del restaurante",hero_eyebrow:"Bienvenidos · Estambul",hero_sub:"En el corazón de la historia.",chip1:"📍 Laleli",chip2:"🕌 Sultanahmet 15min",chip3:"🛒 Gran Bazar 10min",maps_btn:"Google Maps",rest_maps:"Ver en mapa",open_maps:"Ver en mapa",gallery_label:"Fotos del apartamento",gallery_title:"Galería de fotos",ad1_title:"Título de oferta",ad1_sub:"Descripción aquí",ad2a_title:"Servicio / Producto",ad2a_sub:"Descripción corta",ad2b_title:"Servicio / Producto",ad2b_sub:"Descripción corta",ad3_title:"Título de oferta",ad3_sub:"Descripción aquí",ad_tour_title:"Tours Estambul",ad_tour_sub:"GetYourGuide, Viator",ad_mus_title:"Entradas museo",ad_mus_sub:"Enlace afiliado",ad_tr_title:"Transporte",ad_tr_sub:"Enlace afiliado",ad_area_bot_title:"Eventos",ad_area_bot_sub:"Enlace aquí",ad_food_title:"Comida y bebida",ad_food_sub:"Enlace aquí",ad_rm_l_title:"Producto / Servicio",ad_rm_l_sub:"Descripción",ad_rm_r_title:"Producto / Servicio",ad_rm_r_sub:"Descripción",ad_rest_bot_title:"Oferta especial",ad_rest_bot_sub:"Enlace aquí",apt_label:"Su apartamento",apt_title:"Su hogar en Estambul",apt_desc:"Bienvenidos a Laleli.",ft1:"Dormitorio",fb1:"Cama doble, armario.",ft2:"Cocina",fb2:"Totalmente equipada.",ft3:"Wi-Fi",fb3:"Alta velocidad. Contraseña: <b>karakas2024</b>",ft4:"Lavandería",fb4:"Lavadora disponible.",ci_label:"Llegada y salida",ci_title:"Check-in / Check-out",l_in:"Llegada",n_in:"Avísenos con antelación.",l_out:"Salida",n_out:"Contacte para salida tardía.",l_addr:"Dirección",v_addr:"Laleli, Estambul",n_addr:"Dirección exacta en confirmación.",l_host:"Anfitrión",n_host:"También por WhatsApp.",r_label:"Lea por favor",r_title:"Normas",r_box:"Normas Karakaş Homes",rule1:"Prohibido fumar.",rule2:"No mascotas.",rule3:"Fiestas prohibidas. Silencio después de 22:00.",rule4:"No superar número de huéspedes.",rule5:"Dejar cocina limpia.",rule6:"No perder la llave.",f1:"¡Bienvenidos! ✦",a_eyebrow:"Laleli y Estambul",a_sub:"La historia vive en cada esquina.",pl_label:"A pie",pl_title:"Lugares de interés",d1:"~10 min",p1n:"Gran Bazar",p1d:"4.000+ tiendas.",d2:"~15 min",p2n:"Mezquita Azul",p2d:"Seis minaretes.",d3:"~18 min",p3n:"Santa Sofía",p3d:"1000+ años de historia.",d4:"~20 min",p4n:"Bazar de Especias",p4d:"Especias y souvenirs.",d5:"~22 min",p5n:"Palacio Topkapi",p5d:"Herencia otomana.",d6:"~5 min",p6n:"Mezquita Laleli",p6d:"Joya del s. XVIII.",tr_label:"Transporte",tr_title:"Moverse",metro:"Metro y tranvía",m1:"Parada Laleli",m1v:"2 min",m2:"Sultanahmet (T1)",m2v:"3 paradas",m3:"Eminönü",m3v:"5 paradas",m4:"Sirkeci",m4v:"10 min",air:"Aeropuertos",a1:"Istanbul (IST)",a1v:"~45 min",a2:"Sabiha Gökçen",a2v:"~60 min",taxi:"Taxi",t1:"BiTaksi",t2:"Disponible",ik_t:"İstanbulkart",ik_b:"Transporte público.",em_label:"Números",em_title:"Emergencias",e1:"Policía",e2:"Ambulancia",e3:"Bomberos",e4:"Guardacostas",hosp_t:"Hospital",hosp_b:"Çapa — 10 min. Farmacia: <b>182</b>.",f2:"¡Disfruten! ✦",rb:"Cocina turca auténtica",rs:"Sabores tradicionales",mb:"Ver menú",mb2:"Menú completo",of_t:"Regalo",of_b:"Digan que se hospedan aquí — ¡té o café gratis!",ra_label:"Sobre nosotros",ra_title:"Restaurante",ra_desc:"Manti artesanal en cada plato.",ra_al:"Dirección",ra_av:"Laleli, Estambul",ra_an:"5 min del apartamento",ra_hl:"Horario",ra_hv:"Diario 10:00–22:00",ra_pl:"Reservas",menu_label:"Platos",menu_title:"Menú",mh:"Menú completo",qrdos_label:"Menú digital",qrdos_title:"Ver menú completo",cat1:"Variedades mantı",cat2:"Sopas",cat3:"Mezze y ensaladas",cat4:"Bebidas",cat5:"Postres",mn1:"Mantı Kayseri",md1:"Artesanal, yogur con ajo",mn2:"Mantı en caldo",md2:"Caldo, yogur, menta",mn3:"Mantı çökelek",md3:"Queso fresco, tomate",mn4:"Mantı espinacas",md4:"Espinaca, ricotta",sn1:"Sopa de lentejas",sd1:"Lentejas, limón",sn2:"Sopa yayla",sd2:"Yogur, arroz, menta",sin1:"Cacık",sid1:"Yogur, pepino, eneldo",sin2:"Ezme picante",sid2:"Tomate, pimiento",sin3:"Ensalada pastor",sid3:"Tomate, pepino",dn1:"Té turco",dn2:"Café turco",dn3:"Ayran",dn4:"Limonada",den1:"Baklava",ded1:"Pistacho, sirope",den2:"Sütlaç",ded2:"Arroz con leche",c1l:"Dirección",c1v:"Laleli, Estambul",c2l:"Teléfono",c3l:"Horario",c3v:"10:00–22:00",c4l:"Distancia",c4v:"5 min",f3:"¡Que aproveche! ✦",about_eyebrow:"La Familia Karakaş",about_title_em:"¿Quiénes somos?",about_sub:"Estamos aquí para darle la mejor estancia posible.",photo_hint:"Haga clic para subir foto",p1_name:"Nombre Apellido",p1_role:"Anfitrión",p1_bio:"Preséntese aquí...",p2_name:"Nombre Apellido",p2_role:"Anfitriona",p2_bio:"Preséntese aquí...",values_label:"¿Por qué nosotros?",values_title:"Nuestros valores",val1_t:"Hospitalidad genuina",val1_b:"Cada huésped se siente como en casa.",val2_t:"Calidad y limpieza",val2_b:"El apartamento se prepara con cuidado antes de cada estancia.",val3_t:"Ubicación inmejorable",val3_b:"En el corazón de la historia.",val4_t:"Soporte 24/7",val4_b:"Siempre estamos aquí.",f_about:"Es un placer tenerle con nosotros ✦"}
+};
+
+let lang='tr';
+const SLIDE_COUNT=6;
+
+/* ── GALLERY ── */
+function buildGallery(){
+  const slider=document.getElementById('gallery-slider');
+  const dots=document.getElementById('gallery-dots');
+  slider.innerHTML='';dots.innerHTML='';
+  for(let i=0;i<SLIDE_COUNT;i++){
+    const slide=document.createElement('div');
+    slide.className='gallery-slide';
+    slide.innerHTML=`<img id="gimg-${i}" alt="Fotoğraf ${i+1}">
+      <div class="slide-placeholder">
+        <div class="sp-icon">📷</div>
+        <div class="sp-txt">${i+1}. Fotoğraf</div>
+        <div class="sp-sub">Yüklemek için tıklayın</div>
+      </div>`;
+    slide.onclick=()=>uploadGalleryImg(i);
+    slider.appendChild(slide);
+    const dot=document.createElement('div');
+    dot.className='gallery-dot'+(i===0?' active':'');
+    dots.appendChild(dot);
+  }
+  const addBtn=document.createElement('div');
+  addBtn.className='gallery-add';
+  addBtn.innerHTML='<div class="ga-icon">➕</div><div class="ga-txt">Fotoğraf Ekle</div>';
+  addBtn.onclick=()=>uploadGalleryImg(null);
+  slider.appendChild(addBtn);
+  slider.onscroll=updateDots;
+}
+
+function updateDots(){
+  const slider=document.getElementById('gallery-slider');
+  const dots=document.querySelectorAll('.gallery-dot');
+  const idx=Math.round(slider.scrollLeft/(slider.clientWidth-56));
+  dots.forEach((d,i)=>d.classList.toggle('active',i===idx));
+}
+
+function uploadGalleryImg(idx){
+  const inp=document.createElement('input');
+  inp.type='file';inp.accept='image/*';
+  inp.onchange=e=>{
+    const file=e.target.files[0];if(!file)return;
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      if(idx!==null){
+        const img=document.getElementById('gimg-'+idx);
+        if(img){img.src=ev.target.result;img.style.display='block';}
+        const ph=img.parentElement.querySelector('.slide-placeholder');
+        if(ph)ph.style.display='none';
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+  inp.click();
+}
+
+/* ── LOGOS ── */
+function uploadHomesLogo(){
+  const inp=document.createElement('input');inp.type='file';inp.accept='image/*';
+  inp.onchange=e=>{
+    const f=e.target.files[0];if(!f)return;
+    const r=new FileReader();
+    r.onload=ev=>{
+      ['homes-logo-nav','homes-logo-hero'].forEach(id=>{
+        const img=document.getElementById(id);
+        if(img){img.src=ev.target.result;img.style.display='block';}
+      });
+      document.querySelectorAll('.nav-logo-img .lp,.logo-circle .logo-icon,.logo-circle .logo-txt').forEach(el=>el.style.display='none');
+    };
+    r.readAsDataURL(f);
+  };
+  inp.click();
+}
+
+function uploadRestLogo(){
+  const inp=document.createElement('input');inp.type='file';inp.accept='image/*';
+  inp.onchange=e=>{
+    const f=e.target.files[0];if(!f)return;
+    const r=new FileReader();
+    r.onload=ev=>{
+      const img=document.getElementById('rest-logo-hero');
+      if(img){img.src=ev.target.result;img.style.display='block';}
+      document.querySelectorAll('.rest-logo-circle .logo-icon,.rest-logo-circle .logo-txt').forEach(el=>el.style.display='none');
+    };
+    r.readAsDataURL(f);
+  };
+  inp.click();
+}
+
+/* ── LANG ── */
+function setLang(l){
+  lang=l;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`).classList.add('active');
+  document.body.classList.toggle('rtl',l==='ar');
+  const d=T[l];
+  document.querySelectorAll('[data-key]').forEach(el=>{
+    const k=el.getAttribute('data-key');
+    if(d[k]!==undefined)el.innerHTML=d[k];
+  });
+}
+
+function setPage(p){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.page-btn').forEach(x=>x.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  const pbId = p==='restaurant'?'pb-rest': p==='about'?'pb-about':'pb-'+p;
+document.getElementById(pbId).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+
+/* ── LOAD FROM ADMIN PANEL (localStorage) ── */
+function applyAdminSettings(){
+  // Önce gömülü veri, sonra localStorage
+  const raw = localStorage.getItem('kk_settings');
+  const embedded = (typeof window.__SITE_DATA__ !== 'undefined') ? window.__SITE_DATA__ : null;
+  const d = raw ? Object.assign({}, embedded||{}, JSON.parse(raw)) : embedded;
+  if(!d) return;
+
+  // Phone
+  if(d.phone){
+    document.querySelectorAll('.info-value').forEach(el=>{if(el.textContent.includes('+90'))el.textContent=d.phone;});
+    document.querySelectorAll('.contact-value').forEach(el=>{if(el.textContent.includes('+90'))el.textContent=d.phone;});
+  }
+  // Wifi
+  if(d.wifi) document.querySelectorAll('[data-key="fb3"]').forEach(el=>el.innerHTML='Yüksek hız. Şifre: <b>'+d.wifi+'</b>');
+  // Apt addr
+  if(d.addr){
+    document.querySelectorAll('[data-key="v_addr"]').forEach(el=>el.textContent=d.addr);
+    document.querySelectorAll('[data-key="c1v"]').forEach(el=>el.textContent=d.addr);
+  }
+  // Rest addr
+  if(d.restAddr){
+    document.querySelectorAll('[data-key="ra_av"]').forEach(el=>el.textContent=d.restAddr);
+  }
+  // Check-in/out
+  if(d.ciStart&&d.ciEnd){
+    document.querySelectorAll('.info-row').forEach(row=>{
+      const lbl=row.querySelector('.info-label');
+      if(lbl&&(lbl.dataset.key==='l_in'||lbl.textContent.trim().startsWith('Giriş'))){
+        const val=row.querySelector('.info-value');if(val)val.textContent=d.ciStart+' – '+d.ciEnd;
+      }
+    });
+  }
+  if(d.co){
+    document.querySelectorAll('.info-row').forEach(row=>{
+      const lbl=row.querySelector('.info-label');
+      if(lbl&&(lbl.dataset.key==='l_out'||lbl.textContent.trim().startsWith('Çıkış'))){
+        const val=row.querySelector('.info-value');if(val)val.textContent=d.co;
+      }
+    });
+  }
+  // Rest hours
+  if(d.restOpen&&d.restClose){
+    document.querySelectorAll('[data-key="ra_hv"]').forEach(el=>el.textContent='Her gün '+d.restOpen+' – '+d.restClose);
+    document.querySelectorAll('[data-key="c3v"]').forEach(el=>el.textContent=d.restOpen+' – '+d.restClose);
+  }
+  // Offer
+  if(d.offerTitle) document.querySelectorAll('[data-key="of_t"]').forEach(el=>el.textContent=d.offerTitle);
+  if(d.offerBody)  document.querySelectorAll('[data-key="of_b"]').forEach(el=>el.textContent=d.offerBody);
+  // Maps
+
+  // Harita koordinatları
+  if(d.mapLat && d.mapLng){
+    window.__MAP_LAT__ = parseFloat(d.mapLat);
+    window.__MAP_LNG__ = parseFloat(d.mapLng);
+    if(window.__APT_MAP__ && window.__APT_MARKER__){
+      const pos = [window.__MAP_LAT__, window.__MAP_LNG__];
+      window.__APT_MARKER__.setLatLng(pos);
+      window.__APT_MAP__.setView(pos, 16);
+    }
+    // Maps linklerini güncelle
+    const mapsUrl = 'https://maps.google.com/?q=' + window.__MAP_LAT__ + ',' + window.__MAP_LNG__;
+    const dirUrl  = mapsUrl + '&dirflg=w';
+    const mapBtn = document.getElementById('map-gmaps-btn');
+    const dirBtn = document.getElementById('map-directions-btn');
+    if(mapBtn) mapBtn.href = mapsUrl;
+    if(dirBtn) dirBtn.href = dirUrl;
+  }
+  if(d.mapsHome){
+    document.querySelectorAll('#home-maps-btn,#addr-maps-link,#map-gmaps-btn').forEach(el=>el.href=d.mapsHome);
+  }
+  if(d.mapsHome) document.querySelectorAll('#home-maps-btn,#addr-maps-link,#map-gmaps-btn').forEach(el=>el.href=d.mapsHome);
+  if(d.mapsRest) document.querySelectorAll('a[href*="Hakki+Karakas"]').forEach(el=>el.href=d.mapsRest);
+  // Instagram
+  if(d.igHome){const e=document.getElementById('home-ig-btn');if(e)e.href=d.igHome;}
+  if(d.igRest) document.querySelectorAll('a[href*="RESTORAN_INSTAGRAM"]').forEach(el=>el.href=d.igRest);
+  // Menu URL
+  if(d.menuUrl) document.querySelectorAll('a[href*="qrall"]').forEach(el=>el.href=d.menuUrl);
+
+  // Hero
+  if(d.heroEyebrow) document.querySelectorAll('[data-key="hero_eyebrow"]').forEach(el=>el.textContent=d.heroEyebrow);
+  if(d.heroSub)     document.querySelectorAll('[data-key="hero_sub"]').forEach(el=>el.textContent=d.heroSub);
+  if(d.chip1) document.querySelectorAll('[data-key="chip1"]').forEach(el=>el.textContent=d.chip1);
+  if(d.chip2) document.querySelectorAll('[data-key="chip2"]').forEach(el=>el.textContent=d.chip2);
+  if(d.chip3) document.querySelectorAll('[data-key="chip3"]').forEach(el=>el.textContent=d.chip3);
+
+  // Apt title/desc
+  if(d.aptTitle) document.querySelectorAll('[data-key="apt_title"]').forEach(el=>el.textContent=d.aptTitle);
+  if(d.aptDesc)  document.querySelectorAll('[data-key="apt_desc"]').forEach(el=>el.textContent=d.aptDesc);
+
+  // Feat cards
+  if(d.featCards){
+    const keys=[['ft1','fb1'],['ft2','fb2'],['ft3','fb3'],['ft4','fb4']];
+    d.featCards.forEach((c,i)=>{
+      if(keys[i]){
+        document.querySelectorAll(`[data-key="${keys[i][0]}"]`).forEach(el=>el.textContent=c.title||el.textContent);
+        document.querySelectorAll(`[data-key="${keys[i][1]}"]`).forEach(el=>el.innerHTML=c.body||el.innerHTML);
+        // icon
+        const icons=document.querySelectorAll('.feat-icon');
+        if(icons[i])icons[i].textContent=c.icon||icons[i].textContent;
+      }
+    });
+  }
+
+  // Rules
+  if(d.rules&&d.rules.length){
+    const ruleEls=document.querySelectorAll('.rule-text');
+    d.rules.forEach((r,i)=>{if(ruleEls[i])ruleEls[i].textContent=r;});
+  }
+
+  // Places
+  if(d.places&&d.places.length){
+    const distEls=document.querySelectorAll('.attr-dist');
+    const nameEls=document.querySelectorAll('.attr-name');
+    const descEls=document.querySelectorAll('.attr-desc');
+    d.places.forEach((p,i)=>{
+      if(distEls[i])distEls[i].textContent=p.dist;
+      if(nameEls[i])nameEls[i].textContent=p.name;
+      if(descEls[i])descEls[i].textContent=p.desc;
+    });
+  }
+
+  // Metro
+  if(d.metro&&d.metro.length){
+    const metroCard=document.querySelector('.tr-teal');
+    if(metroCard){
+      const rows=metroCard.querySelectorAll('.tr-item');
+      d.metro.forEach((m,i)=>{
+        if(rows[i]){
+          const lbl=rows[i].querySelector('.tr-lbl');const val=rows[i].querySelector('.tr-val');
+          if(lbl)lbl.textContent=m.label;if(val)val.textContent=m.val;
+        }
+      });
+    }
+  }
+  // Airport
+  if(d.airport&&d.airport.length){
+    const airCard=document.querySelector('.tr-blue');
+    if(airCard){
+      const rows=airCard.querySelectorAll('.tr-item');
+      d.airport.forEach((a,i)=>{
+        if(rows[i]){
+          const lbl=rows[i].querySelector('.tr-lbl');const val=rows[i].querySelector('.tr-val');
+          if(lbl)lbl.textContent=a.label;if(val)val.textContent=a.val;
+        }
+      });
+    }
+  }
+
+  // Rest about
+  if(d.restAboutTitle) document.querySelectorAll('[data-key="ra_title"]').forEach(el=>el.textContent=d.restAboutTitle);
+  if(d.restAboutDesc)  document.querySelectorAll('[data-key="ra_desc"]').forEach(el=>el.textContent=d.restAboutDesc);
+  if(d.restBadge) document.querySelectorAll('[data-key="rb"]').forEach(el=>el.textContent=d.restBadge);
+  if(d.restSub)   document.querySelectorAll('[data-key="rs"]').forEach(el=>el.textContent=d.restSub);
+
+  // Logos
+  if(d.homesLogo){
+    // Nav logo
+    const navImg=document.getElementById('homes-logo-nav');
+    if(navImg){navImg.src=d.homesLogo;navImg.style.display='block';}
+    document.querySelectorAll('.nav-logo-img .lp').forEach(el=>el.style.display='none');
+    // Hero logo
+    const heroImg=document.getElementById('homes-logo-hero');
+    if(heroImg){heroImg.src=d.homesLogo;heroImg.style.display='block';}
+    document.querySelectorAll('.logo-circle .logo-icon,.logo-circle .logo-txt').forEach(el=>el.style.display='none');
+  }
+  if(d.restLogo){
+    const restImg=document.getElementById('rest-logo-hero');
+    if(restImg){restImg.src=d.restLogo;restImg.style.display='block';}
+    document.querySelectorAll('.rest-logo-circle .logo-icon,.rest-logo-circle .logo-txt').forEach(el=>el.style.display='none');
+  }
+
+  // Gallery photos
+  if(d.photos){
+    Object.entries(d.photos).forEach(([i,src])=>{
+      const img=document.getElementById('gimg-'+i);
+      if(img){img.src=src;img.style.display='block';}
+      const slide=img&&img.parentElement;
+      if(slide){const ph=slide.querySelector('.slide-placeholder');if(ph)ph.style.display='none';}
+    });
+  }
+
+  // Ads
+  if(d.ads){
+    applyAd('ad-home-top',   d.ads['h-top']);
+    applyAd('ad-home-mid-l', d.ads['h-ml']);
+    applyAd('ad-home-mid-r', d.ads['h-mr']);
+    applyAd('ad-home-bot',   d.ads['h-bot']);
+    applyAd(null, d.ads['a-top'], 'area-top');
+    applyAd(null, d.ads['r-top'], 'rest-top');
+  }
+
+  // Menu prices
+  const menuRaw=localStorage.getItem('kk_menu');
+  if(menuRaw){
+    const menu=JSON.parse(menuRaw);
+    const priceEls=document.querySelectorAll('.mi-price');
+    const nameEls=document.querySelectorAll('.mi-name');
+    const descEls=document.querySelectorAll('.mi-desc');
+    let pi=0;
+    menu.forEach(row=>{
+      if(row.cat)return;
+      if(nameEls[pi])nameEls[pi].textContent=row.name||nameEls[pi].textContent;
+      if(descEls[pi]&&row.desc!==undefined)descEls[pi].textContent=row.desc;
+      if(priceEls[pi])priceEls[pi].textContent=row.price?'₺'+row.price:priceEls[pi].textContent;
+      pi++;
+    });
+  }
+}
+
+function applyAd(elId,adData){
+  const el=elId?document.getElementById(elId):null;
+  if(!adData)return;
+  if(el){
+    el.style.display=(!adData.link||adData.link.trim()==='')? 'none':'';
+    if(adData.link&&adData.link.trim()!==''){
+      el.href=adData.link;
+      const t=el.querySelector('.ad-banner-title,.ad-card-title');
+      const s=el.querySelector('.ad-banner-sub,.ad-card-sub');
+      const ic=el.querySelector('.ad-banner-icon,.ad-card-icon');
+      if(t&&adData.title)t.textContent=adData.title;
+      if(s&&adData.sub)s.textContent=adData.sub;
+      if(ic&&adData.icon)ic.textContent=adData.icon;
+    }
+  }
+}
+
+
+  // Person cards
+  if(d.about){
+    [1,2].forEach(n=>{
+      const pre='person'+n;
+      if(d.about['p'+n+'_name']){const el=document.getElementById('person-name-'+n);if(el)el.textContent=d.about['p'+n+'_name'];}
+      if(d.about['p'+n+'_role']){const el=document.getElementById('person-role-'+n);if(el)el.textContent=d.about['p'+n+'_role'];}
+      if(d.about['p'+n+'_bio']){const el=document.getElementById('person-bio-'+n);if(el)el.textContent=d.about['p'+n+'_bio'];}
+      if(d.about['p'+n+'_ig']){const el=document.getElementById('person-ig-'+n);if(el){el.href=d.about['p'+n+'_ig'];el.style.display='inline-flex';}}
+      if(d.about['p'+n+'_wa']){const el=document.getElementById('person-wa-'+n);if(el){el.href='https://wa.me/'+d.about['p'+n+'_wa'].replace(/\D/g,'');el.style.display='inline-flex';}}
+      if(d['personPhoto'+n]){
+        const img=document.getElementById('person-img-'+n);
+        const ph=document.getElementById('person-ph-'+n);
+        if(img){img.src=d['personPhoto'+n];img.style.display='block';}
+        if(ph)ph.style.display='none';
+      }
+    });
+  }
+  // Menu images
+  if(d.menuImages){
+    document.querySelectorAll('.mi-img-placeholder[onclick]').forEach(el=>{
+      const m=el.getAttribute('onclick').match(/'([^']+)'\)/);
+      if(m&&d.menuImages[m[1]]){
+        el.style.backgroundImage='url('+d.menuImages[m[1]]+')';
+        el.style.backgroundSize='cover';el.style.backgroundPosition='center';
+        el.textContent='';el.style.border='none';
+      }
+    });
+  }
+
+applyAdminSettings();
+
+
+function uploadPersonPhoto(num){
+  const inp=document.createElement('input');inp.type='file';inp.accept='image/*';
+  inp.onchange=e=>{
+    const f=e.target.files[0];if(!f)return;
+    const r=new FileReader();
+    r.onload=ev=>{
+      const img=document.getElementById('person-img-'+num);
+      const ph=document.getElementById('person-ph-'+num);
+      if(img){img.src=ev.target.result;img.style.display='block';}
+      if(ph)ph.style.display='none';
+      // save to localStorage
+      const d=JSON.parse(localStorage.getItem('kk_settings')||'{}');
+      d['personPhoto'+num]=ev.target.result;
+      localStorage.setItem('kk_settings',JSON.stringify(d));
+    };
+    r.readAsDataURL(f);
+  };
+  inp.click();
+}
+
+function uploadMenuImg(el, key){
+  const inp=document.createElement('input');inp.type='file';inp.accept='image/*';
+  inp.onchange=e=>{
+    const f=e.target.files[0];if(!f)return;
+    const r=new FileReader();
+    r.onload=ev=>{
+      el.style.backgroundImage='url('+ev.target.result+')';
+      el.style.backgroundSize='cover';
+      el.style.backgroundPosition='center';
+      el.textContent='';
+      el.style.border='none';
+      const d=JSON.parse(localStorage.getItem('kk_settings')||'{}');
+      if(!d.menuImages)d.menuImages={};
+      d.menuImages[key]=ev.target.result;
+      localStorage.setItem('kk_settings',JSON.stringify(d));
+    };
+    r.readAsDataURL(f);
+  };
+  inp.click();
+}
+
+
+/* ── LEAFLET HARİTA ── */
+function initMap(){
+  if(typeof L === 'undefined' || !document.getElementById('apt-map')) return;
+  // Varsayılan koordinat: Laleli, İstanbul
+  const lat = window.__MAP_LAT__ || 41.0128;
+  const lng = window.__MAP_LNG__ || 28.9536;
+  
+  const map = L.map('apt-map', {
+    center:[lat, lng],
+    zoom:16,
+    zoomControl:true,
+    scrollWheelZoom:false,
+    attributionControl:false
+  });
+  
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom:19
+  }).addTo(map);
+  
+  // Özel marker
+  const icon = L.divIcon({
+    html: '<div style="background:linear-gradient(135deg,#00B4A6,#00897B);width:36px;height:36px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid white;box-shadow:0 4px 12px rgba(0,180,166,0.5);"></div>',
+    iconSize:[36,36],
+    iconAnchor:[18,36],
+    className:''
+  });
+  
+  const marker = L.marker([lat,lng], {icon}).addTo(map);
+  marker.bindPopup('<b style="font-family:Nunito,sans-serif;font-size:13px;">🏠 Karakaş Homes</b><br><span style="font-size:11px;color:#546E7A;">Laleli, İstanbul</span>').openPopup();
+  
+  window.__APT_MAP__ = map;
+  window.__APT_MARKER__ = marker;
+}
+
+// Leaflet yüklendikten sonra haritayı başlat
+function loadLeaflet(){
+  if(typeof L !== 'undefined'){ initMap(); return; }
+  const script = document.createElement('script');
+  script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+  script.onload = initMap;
+  document.head.appendChild(script);
+}
+
+// Daire sayfası açıldığında haritayı yükle
+// setPage'i override etmek yerine MutationObserver ile izle
+function watchHomeTab(){
+  const homeBtn = document.getElementById('pb-home');
+  if(!homeBtn) return;
+  homeBtn.addEventListener('click', function(){
+    setTimeout(loadLeaflet, 150);
+  });
+}
+
+buildGallery();
+
+// İlk yüklemede ve tab geçişlerinde haritayı başlat
+setTimeout(()=>{ loadLeaflet(); watchHomeTab(); }, 400);
+</script>
+
+<div id="admin-overlay">
+  <div style="position:fixed;top:0;right:0;z-index:10000;"><button onclick="closeAdmin()" style="background:#E53935;border:none;color:white;padding:12px 20px;font-size:14px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;border-radius:0 0 0 14px;">✕ Kapat</button></div>
+
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-icon">🔐</div>
+    <div class="login-title">Admin Paneli</div>
+    <div class="login-sub">Karakaş Homes & Hakkı Karakaş Mantı</div>
+    <input type="password" class="login-input" id="pw-input" placeholder="Şifrenizi girin">
+    <button class="login-btn" onclick="adm_doLogin()">Giriş Yap</button>
+    <div class="login-err" id="login-err">❌ Hatalı şifre.</div>
+    <p style="font-size:11px;color:rgba(255,255,255,0.3);margin-top:18px;">Varsayılan: <b style="color:rgba(255,255,255,0.5);">admin123</b></p>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="admin-shell">
+  <div class="topbar">
+    <div><div class="topbar-brand">Admin Paneli<span>Karakaş Homes & Mantı</span></div></div>
+    <div class="topbar-right">
+      <button class="save-all-btn" onclick="adm_saveAll()">💾 Kaydet</button>
+      <button class="logout-btn" onclick="adm_doLogout()">Çıkış</button>
+    </div>
+  </div>
+  <div class="tab-nav">
+    <button class="tab-btn active"  onclick="adm_setTab('genel',this)">⚙️ Genel</button>
+    <button class="tab-btn" onclick="adm_setTab('icerik',this)">✏️ İçerikler</button>
+    <button class="tab-btn" onclick="adm_setTab('foto',this)">📷 Fotoğraflar</button>
+    <button class="tab-btn" onclick="adm_setTab('linkler',this)">🔗 Linkler</button>
+    <button class="tab-btn" onclick="adm_setTab('reklam',this)">💰 Reklam</button>
+    <button class="tab-btn" onclick="adm_setTab('menu',this)">🥟 Menü</button>
+    <button class="tab-btn" onclick="adm_setTab('biz',this)">👤 Biz Kimiz</button>
+    <button class="tab-btn" onclick="adm_setTab('ayarlar',this)">🔒 Ayarlar</button>
+  </div>
+
+  <!-- ══ GENEL ══ -->
+  <div class="tab-content active" id="tab-genel">
+    <div class="admin-card">
+      <div class="admin-card-head"><div class="admin-card-icon">🏠</div><div class="admin-card-title">Daire Bilgileri</div></div>
+      <div class="admin-card-body">
+        <div class="field"><label>Telefon / WhatsApp</label><input id="f-phone" type="tel" placeholder="+90 5XX XXX XX XX"></div>
+        <div class="field"><label>Daire Adresi</label><input id="f-addr" placeholder="Ordu Cad. No:12 Laleli, İstanbul"></div>
+        <div class="field"><label>Wi-Fi Şifresi</label><input id="f-wifi" placeholder="karakas2024"></div>
+        <div class="field-row">
+          <div class="field"><label>Check-in Başlangıç</label><input id="f-ci-start" type="time" value="14:00"></div>
+          <div class="field"><label>Check-in Bitiş</label><input id="f-ci-end" type="time" value="22:00"></div>
+        </div>
+        <div class="field"><label>Check-out Saati</label><input id="f-co" type="time" value="11:00"></div>
+      
+        <div class="admin-card">
+          <div class="admin-card-head"><div class="admin-card-icon">🗺</div><div class="admin-card-title">Harita Koordinatları</div></div>
+          <div class="admin-card-body">
+            <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">💡 Google Maps'te konumunuzu açın → sağ tıklayın → koordinatları kopyalayın</p>
+            <div class="field-row">
+              <div class="field"><label>Enlem (Latitude)</label><input id="f-map-lat" placeholder="41.0128" type="number" step="0.0001"></div>
+              <div class="field"><label>Boylam (Longitude)</label><input id="f-map-lng" placeholder="28.9536" type="number" step="0.0001"></div>
+            </div>
+            <div class="field"><label>Google Maps Linki (Daire)</label><input id="f-maps-home" placeholder="https://maps.google.com/?q=..."></div>
+          </div>
+        </div>
+
+</div>
+    </div>
+    <div class="admin-card">
+      <div class="admin-card-head"><div class="admin-card-icon">🥟</div><div class="admin-card-title">Restoran Bilgileri</div></div>
+      <div class="admin-card-body">
+        <div class="field"><label>Restoran Telefonu</label><input id="f-rest-phone" type="tel" placeholder="+90 212 274 29 90" value="+90 212 274 29 90"></div>
+        <div class="field"><label>Restoran Adresi</label><input id="f-rest-addr" placeholder="Esentepe Mah., Tevfik Erdönmez Paşa Sok. No:10, Şişli"></div>
+        <div class="field-row">
+          <div class="field"><label>Açılış Saati</label><input id="f-rest-open" type="time" value="10:00"></div>
+          <div class="field"><label>Kapanış Saati</label><input id="f-rest-close" type="time" value="22:00"></div>
+        </div>
+      </div>
+    </div>
+    <div class="admin-card">
+      <div class="admin-card-head"><div class="admin-card-icon">🎁</div><div class="admin-card-title">Misafir Teklifi (Sarı Banner)</div></div>
+      <div class="admin-card-body">
+        <div class="field"><label>Başlık</label><input id="f-offer-title" placeholder="Misafirlerimize Özel"></div>
+        <div class="field"><label>Açıklama</label><textarea id="f-offer-body" placeholder="Karakaş Homes misafiri olduğunuzu söyleyin..."></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ İÇERİKLER ══ -->
+  <div class="tab-content" id="tab-icerik">
+
+    <!-- HERO -->
+    <div class="admin-card">
+      <div class="admin-card-head"><div class="admin-card-icon">✨</div><div class="admin-card-title">Hero Bölümü — Daire</div></div>
+      <div class="admin-card-body">
+        <div class="field"><label>Üst Etiket (eyebrow)</label><input id="c-hero-eyebrow" placeholder="Hoş Geldiniz · İstanbul, Laleli"></div>
+        <div class="field"><label>Alt Yazı</label><textarea id="c-hero-sub" placeholder="Tarihin kalbinde..."></textarea></div>
+        <div class="sec-div">Chip Etiketler</div>
+        <div class="field-row">
+          <div class="field"><label>Chip 1</label><input id="c-chip1" placeholder="📍 Laleli"></div>
+          <div class="field"><label>Chip 2</label><input id="c-chip2" placeholder="🕌 Sultanahmet 15dk"></div>
+        </div>
+        <div class="field"><label>Chip 3</label><input id="c-chip3" placeholder="🛒 Kapalı Çarşı 10dk"></div>
+      </div>
+    </div>
+
+    <!-- DAİRE ÖZELLİKLERİ -->
+    <div class="admin-card">
+      <div class="admin-card-head"><div class="admin-card-icon">🏠</div><div class="admin-card-title">Daire Özellikleri (4 Kart)</div></div>
+      <div class="admin-card-body">
+        <div id="feat-cards-wrap"></div>
+      </div>
+    </div>
+
+    <!-- DAİRE TANITIM METNİ -->
+    <div class="admin-card">
+      <div class="admin-card-head"><div class="admin-card-icon">📝</div><div class="admin-card-title">Daire Tanıtım Metni</div></div>
+      <div class="admin-card-body">
+        <div class="field"><label>Başlık</label><input id="c-apt-title" placeholder="Eviniz İstanbul'da"></div>
+        <div class="field"><label>Açıklama</label><textarea id="c-apt-desc" placeholder="Laleli'nin tarihi dokusunda..."></textarea></div>
+      </div>
+    </div>
+
+    <!-- EV KURALLARI -->
+    <div class="admin-card">
+      <div class="admin-card-head"><div class="admin-card-icon">📋</div><div class="admin-card-title">Ev Kuralları</div></div>
+      <div class="admin-card-body">
+        <div id="rules-wrap"></div>
+        <button class="add-rep-btn" onclick="adm_addRule()">+ Kural Ekle</button>
+      </div>
+    </div>
+
+    <!-- TURİSTİK YERLER -->
+    <div class="admin-card">
+      <div class="admin-card-head"><div class="admin-card-icon">🗺</div><div class="admin-card-title">Turistik Yerler</div></div>
+      <div class="admin-card-body">
+        <div id="places-wrap"></div>
+        <button class="add-rep-btn" onclick="adm_addPlace()">+ Yer Ekle</button>
+      </div>
+    </div>
+
+    <!-- ULAŞIM -->
+    <div class="admin-card">
+      <div class="admin-card-head"><div class="admin-card-icon">🚇</div><div class="admin-card-title">Metro & Tramvay Bilgileri</div></div>
+      <div class="admin-card-body">
+        <div id="metro-wrap"></div>
+        <button class="add-rep-btn" onclick="adm_addMetro()">+ Satır Ekle</button>
+      </div>
+    </div>
+
+    <div class="admin-card">
+      <div class="admin-card-head"><div class="admin-card-icon">✈️</div><div class="admin-card-title">Havalimanı Bilgileri</div></div>
+      <div class="admin-card-body">
+        <div id="airport-wrap"></div>
+        <button class="add-rep-btn" onclick="adm_addAirport()">+ Satır Ekle</button>
+      </div>
+    </div>
+
+    <!-- RESTORAN HAKKINDA -->
+    <div class="admin-card">
+      <div class="admin-card-head"><div class="admin-card-icon">🥟</div><div class="admin-card-title">Restoran Hakkında Metin</div></div>
+      <div class="admin-card-body">
+        <div class="field"><label>Başlık</label><input id="c-rest-about-title" placeholder="Restoranımız"></div>
+        <div class="field"><label>Açıklama</label><textarea id="c-rest-about-desc" placeholder="Hakkı Karakaş Mantı, geleneksel..."></textarea></div>
+        <div class="field"><label>Restoran Rozeti (badge)</label><input id="c-rest-badge" placeholder="Otantik Türk Mutfağı · İstanbul"></div>
+        <div class="field"><label>Alt Başlık (italik)</label><input id="c-rest-sub" placeholder="Geleneksel lezzetler, samimi atmosfer"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══ FOTOĞRAFLAR ══ -->
+  <div class="tab-content" id="tab-foto">
+    <div class="admin-card">
+      <div class="admin-card-head"><div class="admin-card-icon">📷</div><div class="admin-card-title">Daire Fotoğrafları (Galeri)</div></div>
+      <div class="admin-card-body">
+        <p style="font-size:13px;color:var(--muted);margin-bottom:14px;">Fotoğrafa tıklayarak yükleyin. Kaydedilince misafir sitesindeki galeriye yansır.</p>
+        <div class="photo-grid" id="photo-grid"></div>
+        <button class="add-rep-btn" onclick="adm_addPhotoSlot()">+ Yeni Slot Ekle</button>
+      </div>
+    </div>
+    <div class="admin-card">
+      <div class="admin-card-head"><div class="admin-card-icon">🏠</div><div class="admin-card-title">Karakaş Homes Logosu</div></div>
+      <div class="admin-card-body">
+        <div style="display:flex;align-items:center;gap:16px;">
+          <div id="homes-logo-prev" style="width:80px;height:80px;border-radius:18px;background:var(--bg2);border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;font-size:32px;cursor:pointer;overflow:hidden;flex-shrink:0;" onclick="adm_uploadLogo('homes')">
+            <img id="homes-logo-img" style="width:100%;height:100%;object-fit:cover;display:none;border-radius:16px;" alt="">
+            <span id="homes-logo-ph">🏠</span>
+          </div>
+          <div>
+            <div style="font-size:14px;font-weight:700;color:var(--dark2);margin-bottom:4px;">Homes Logosu</div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Nav çubuğu ve daire hero'sunda görünür</div>
+            <button onclick="adm_uploadLogo('homes')" style="background:var(--teal);border:none;border-radius:8px;padding:8px 14px;color:white;font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;">📁 Yükle</button>
+            <button onclick="adm_clearLogo('homes')" style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 14px;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;margin-left:6px;">🗑 Kaldır</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="admin-card">
+      <div class="admin-card-head"><div class="admin-card-icon">🥟</div><div class="admin-card-title">Restoran Logosu</div></div>
+      <div class="admin-card-body">
+        <div style="display:flex;align-items:center;gap:16px;">
+          <div id="rest-logo-prev" style="width:80px;height:80px;border-radius:50%;background:var(--bg2);border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;font-size:32px;cursor:pointer;overflow:hidden;flex-shrink:0;" onclick="adm_uploadLogo('rest')">
+            <img id="rest-logo-img" style="width:100%;height:100%;object-fit:cover;display:none;border-radius:50%;" alt="">
+            <span id="rest-logo-ph">🥟</span>
+          </div>
+          <div>
+            <div style="font-size:14px;font-weight:700;color:var(--dark2);margin-bottom:4px;">Restoran Logosu</div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Restoran sayfası hero'sunda görünür (ayrı)</div>
+            <button onclick="adm_uploadLogo('rest')" style="background:var(--teal);border:none;border-radius:8px;padding:8px 14px;color:white;font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;">📁 Yükle</button>
+            <button onclick="adm_clearLogo('rest')" style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 14px;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;margin-left:6px;">🗑 Kaldır</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ LİNKLER ══ -->
+  <div class="tab-content" id="tab-linkler">
+    <div class="admin-card">
+      <div class="admin-card-head"><div class="admin-card-icon">📍</div><div class="admin-card-title">Google Maps Linkleri</div></div>
+      <div class="admin-card-body">
+        <div class="field"><label>Daire Google Maps URL</label><input id="f-maps-home" placeholder="https://maps.google.com/?q=..."></div>
+        <div class="field"><label>Restoran Google Maps URL</label><input id="f-maps-rest" placeholder="https://maps.google.com/?q=..."></div>
+        <p style="font-size:12px;color:var(--muted);margin-top:4px;">💡 Google Maps → Paylaş → Link kopyala</p>
+      </div>
+    </div>
+    <div class="admin-card">
+      <div class="admin-card-head"><div class="admin-card-icon">📸</div><div class="admin-card-title">Sosyal Medya</div></div>
+      <div class="admin-card-body">
+        <div class="field"><label>Daire Instagram</label><input id="f-ig-home" placeholder="https://instagram.com/karakashomes"></div>
+        <div class="field"><label>Restoran Instagram</label><input id="f-ig-rest" placeholder="https://instagram.com/hakkikarakas"></div>
+      </div>
+    </div>
+    <div class="admin-card">
+      <div class="admin-card-head"><div class="admin-card-icon">📋</div><div class="admin-card-title">Dijital Menü Linki</div></div>
+      <div class="admin-card-body">
+        <div class="field"><label>QRall / Menü URL</label><input id="f-menu-url" value="https://qrdos.tr/hakki-karakas-manti"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ REKLAM ══ -->
+  <div class="tab-content" id="tab-reklam">
+    <p style="font-size:13px;color:var(--muted);margin-bottom:14px;">Link boş bırakılan alanlar sitede otomatik gizlenir.</p>
+
+    <div class="admin-card">
+      <div class="admin-card-head"><div class="admin-card-icon">🏠</div><div class="admin-card-title">Daire Sayfası Reklamları</div></div>
+      <div class="admin-card-body">
+        <div id="ads-home-wrap"></div>
+      </div>
+    </div>
+    <div class="admin-card">
+      <div class="admin-card-head"><div class="admin-card-icon">🗺</div><div class="admin-card-title">Çevre & Ulaşım Reklamları</div></div>
+      <div class="admin-card-body">
+        <div id="ads-area-wrap"></div>
+      </div>
+    </div>
+    <div class="admin-card">
+      <div class="admin-card-head"><div class="admin-card-icon">🥟</div><div class="admin-card-title">Restoran Sayfası Reklamları</div></div>
+      <div class="admin-card-body">
+        <div id="ads-rest-wrap"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ MENÜ ══ -->
+  <div class="tab-content" id="tab-menu">
+    <div class="admin-card">
+      <div class="admin-card-head"><div class="admin-card-icon">🥟</div><div class="admin-card-title">Menü Fiyatları & İsimleri</div></div>
+      <div class="admin-card-body" style="padding:0;overflow-x:auto;">
+        <table class="menu-table">
+          <thead><tr><th style="width:38%">Ürün Adı</th><th>Açıklama</th><th style="width:86px">Fiyat ₺</th></tr></thead>
+          <tbody id="menu-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══ BİZ KİMİZ ══ -->
+  <div class="tab-content" id="tab-biz">
+
+    <div class="admin-card">
+      <div class="admin-card-head"><div class="admin-card-icon">👤</div><div class="admin-card-title">1. Kişi Tanıtımı</div></div>
+      <div class="admin-card-body">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
+          <div id="p1-photo-prev" onclick="adm_uploadPersonAdminPhoto(1)" style="width:80px;height:80px;border-radius:50%;background:var(--bg2);border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;font-size:32px;cursor:pointer;overflow:hidden;flex-shrink:0;position:relative;">
+            <img id="p1-photo-img" style="width:100%;height:100%;object-fit:cover;display:none;position:absolute;inset:0;border-radius:50%;" alt="">
+            <span id="p1-photo-ph">👤</span>
+          </div>
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--dark2);margin-bottom:4px;">Profil Fotoğrafı</div>
+            <button onclick="adm_uploadPersonAdminPhoto(1)" style="background:var(--teal);border:none;border-radius:8px;padding:7px 14px;color:white;font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;">📁 Yükle</button>
+            <button onclick="adm_clearPersonPhoto(1)" style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:7px 12px;color:var(--muted);font-size:12px;cursor:pointer;font-family:'Nunito',sans-serif;margin-left:6px;">🗑 Kaldır</button>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Ad Soyad</label><input id="p1-name" placeholder="Örn: Hakkı Karakaş"></div>
+          <div class="field"><label>Rol / Ünvan</label><input id="p1-role" placeholder="Örn: Ev Sahibi"></div>
+        </div>
+        <div class="field"><label>Biyografi / Tanıtım</label><textarea id="p1-bio" style="min-height:120px;" placeholder="Kendinizi tanıtın. Geçmişiniz, hobiler, misafirlerinize vermek istediğiniz mesaj..."></textarea></div>
+        <div class="field-row">
+          <div class="field"><label>Instagram Linki</label><input id="p1-ig" placeholder="https://instagram.com/..."></div>
+          <div class="field"><label>WhatsApp Numarası</label><input id="p1-wa" placeholder="+90 5XX XXX XX XX"></div>
+        </div>
+      </div>
+    </div>
+
+    
+
+    <div class="admin-card">
+      <div class="admin-card-head"><div class="admin-card-icon">⭐</div><div class="admin-card-title">Değer Kartları</div></div>
+      <div class="admin-card-body">
+        <p style="font-size:12px;color:var(--muted);margin-bottom:14px;">4 değer kartının başlık ve açıklamasını düzenleyin.</p>
+        <div id="values-wrap"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══ AYARLAR ══ -->
+  <div class="tab-content" id="tab-ayarlar">
+    <div class="admin-card">
+      <div class="admin-card-head"><div class="admin-card-icon">🔒</div><div class="admin-card-title">Şifre Değiştir</div></div>
+      <div class="admin-card-body">
+        <div class="pw-change-wrap">
+          <div class="pw-change-title">⚠️ Şifrenizi unutmayın — sıfırlama yoktur.</div>
+          <div class="field"><label>Mevcut Şifre</label><input type="password" id="pw-current"></div>
+          <div class="field"><label>Yeni Şifre</label><input type="password" id="pw-new" placeholder="min. 6 karakter"></div>
+          <div class="field"><label>Tekrar</label><input type="password" id="pw-confirm"></div>
+          <button class="save-all-btn" onclick="adm_changePassword()">Şifreyi Değiştir</button>
+          <div id="pw-msg" style="font-size:13px;margin-top:10px;"></div>
+        </div>
+      </div>
+    </div>
+    <div class="admin-card">
+      <div class="admin-card-head"><div class="admin-card-icon">🗑</div><div class="admin-card-title">Sıfırla</div></div>
+      <div class="admin-card-body">
+        <p style="font-size:13px;color:var(--muted);margin-bottom:14px;">Tüm değişiklikler silinir. Geri alınamaz.</p>
+        <button class="danger-btn" onclick="adm_resetAll()">⚠️ Tümünü Sıfırla</button>
+      </div>
+    </div>
+    <div class="admin-card">
+      <div class="admin-card-head"><div class="admin-card-icon">ℹ️</div><div class="admin-card-title">Kullanım</div></div>
+      <div class="admin-card-body">
+        <p style="font-size:13px;color:var(--muted);line-height:1.9;">
+          1. <b>karakas-admin.html</b> ve <b>karakas-guest-site.html</b> aynı klasörde olmalı.<br>
+          2. Her ikisini aynı web sunucusuna yükleyin (aynı domain).<br>
+          3. Değişiklikler tarayıcının <b>localStorage</b>'ına kaydedilir.<br>
+          4. Misafir sitesi aynı tarayıcıda açıldığında otomatik güncellenir.<br>
+          5. QR kod için misafir sitesi URL'ini kullanın.
+        </p>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /admin-shell -->
+<div class="save-badge" id="save-badge">✓ Kaydedildi!</div>
+
+
+
+</div>
+<div id="admin-secret-btn" style="position:fixed;bottom:0;right:0;width:64px;height:64px;z-index:500;cursor:default;-webkit-tap-highlight-color:transparent;" onmousedown="startAdminHold(event)" onmouseup="cancelAdminHold()" onmouseleave="cancelAdminHold()" ontouchstart="startAdminHold(event)" ontouchend="cancelAdminHold()" ontouchcancel="cancelAdminHold()"></div>
+<div id="admin-hold-bar" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:rgba(10,31,46,0.88);color:white;border-radius:20px;padding:10px 22px;font-size:13px;font-family:'Nunito',sans-serif;font-weight:700;z-index:501;">🔓 Admin paneli açılıyor...</div>
+<script>
+(function(){
+'use strict';
+
+/* ══ DEFAULTS ══ */
+const D = {
+  phone:'+90 5XX XXX XX XX', addr:'Laleli, İstanbul', wifi:'karakas2024',
+  ciStart:'14:00', ciEnd:'22:00', co:'11:00',
+  restPhone:'+90 212 274 29 90', restAddr:'Esentepe Mah., Tevfik Erdönmez Paşa Sok. No:10, Şişli',
+  restOpen:'10:00', restClose:'22:00',
+  offerTitle:'Misafirlerimize Özel',
+  offerBody:'Karakaş Homes misafiri olduğunuzu söyleyin — çay veya Türk kahvesi ikramımızdır!',
+  mapsHome:'https://maps.google.com/?q=Laleli+Istanbul',
+  mapsRest:'https://maps.google.com/maps?q=Hakkı+Karakaş+Mantı+Esentepe+Mahallesi+Tevfik+Erdönmez+Paşa+Sokak+Şişli+İstanbul',
+  igHome:'https://instagram.com/INSTAGRAM_HESABINIZ',
+  igRest:'https://instagram.com/RESTORAN_INSTAGRAM',
+  menuUrl:'https://qrdos.tr/hakki-karakas-manti',
+  heroEyebrow:'Hoş Geldiniz · İstanbul, Laleli',
+  heroSub:'Tarihin kalbinde, evinizin sıcaklığında. Güzel bir konaklama dileriz.',
+  chip1:'📍 Laleli', chip2:'🕌 Sultanahmet 15dk', chip3:'🛒 Kapalı Çarşı 10dk',
+  aptTitle:'Eviniz İstanbul\'da',
+  aptDesc:'Laleli\'nin tarihi dokusunda, her şeye yürüme mesafesinde konumlanan dairemize hoş geldiniz.',
+  restAboutTitle:'Restoranımız',
+  restAboutDesc:'Hakkı Karakaş Mantı, geleneksel Türk mantı sanatını yaşatmak amacıyla kurulmuştur. El açması hamur ve nefis soslarımızla her tabak bir ustalık eseridir.',
+  restBadge:'Otantik Türk Mutfağı · İstanbul',
+  restSub:'Geleneksel lezzetler, samimi atmosfer',
+  featCards:[
+    {icon:'🛏', title:'Yatak Odası', body:'Çift kişilik konforlu yatak, bol dolap, karanlık stor perde.'},
+    {icon:'🍳', title:'Mutfak', body:'Tam donanımlı mutfak, çay & kahve, buzdolabı.'},
+    {icon:'📶', title:'Wi-Fi', body:'Yüksek hız. Şifre kaşağıdadır.'},
+    {icon:'🧺', title:'Çamaşır', body:'Çamaşır makinesi mevcut. Deterjan dolaptadır.'}
+  ],
+  rules:[
+    'Sigara içmek kesinlikle yasaktır. Balkonda da sigara içilmemektedir.',
+    'Evcil hayvan kabul edilmemektedir.',
+    'Gürültülü müzik ve parti düzenlenmesi yasaktır. Saat 22:00\'den sonra sessizlik.',
+    'Rezervasyonda belirtilen kişi sayısını aşmayınız.',
+    'Çıkışta mutfağı temiz bırakınız, çöpleri lütfen atınız.',
+    'Kapı anahtarını kaybetmeyiniz. Kayıp durumunda ücret talep edilecektir.'
+  ],
+  places:[
+    {dist:'~10 dk', name:'Kapalı Çarşı', desc:'4.000+ dükkan; mücevher, halı, baharatlar. Pzt–Cmt 08:30–19:00.'},
+    {dist:'~15 dk', name:'Sultanahmet Camii', desc:'Altı minareli İstanbul ikonu. İznik çinileri. Uygun kıyafet gereklidir.'},
+    {dist:'~18 dk', name:'Ayasofya', desc:'Bin yılı aşkın tarih, Bizans mozaikleri ve muhteşem kubbe.'},
+    {dist:'~20 dk', name:'Mısır Çarşısı', desc:'Rengarenk baharat ve şekerleme dükkânları. Hediyelik alışveriş için ideal.'},
+    {dist:'~22 dk', name:'Topkapı Sarayı', desc:'Osmanlı\'nın 400 yıllık kalbi. Hazine, harem ve Boğaz manzarası.'},
+    {dist:'~5 dk',  name:'Laleli Camii', desc:'18. yüzyıl Osmanlı şaheseri. Sessiz ve etkileyici atmosfer.'}
+  ],
+  metro:[
+    {label:'Laleli-Üniversite Durağı', val:'2 dk yürüyüş'},
+    {label:'Sultanahmet (T1)', val:'3 durak'},
+    {label:'Eminönü – Vapur', val:'5 durak'},
+    {label:'Sirkeci Marmaray', val:'10 dk yürüyüş'}
+  ],
+  airport:[
+    {label:'İstanbul Havalimanı (IST)', val:'~45 dk'},
+    {label:'Sabiha Gökçen (SAW)', val:'~60 dk'}
+  ],
+  ads:{
+    'h-top': {title:'Özel Teklif Başlığı',sub:'Açıklama buraya',link:'',icon:'🎯'},
+    'h-ml':  {title:'Hizmet / Ürün',sub:'Kısa açıklama',link:'',icon:'🛎'},
+    'h-mr':  {title:'Hizmet / Ürün',sub:'Kısa açıklama',link:'',icon:'✈️'},
+    'h-bot': {title:'Özel Teklif Başlığı',sub:'Açıklama buraya',link:'',icon:'🌟'},
+    'a-top': {title:'İstanbul Tur Rezervasyonu',sub:'GetYourGuide, Viator vb.',link:'',icon:'🗺'},
+    'a-ml':  {title:'Müze Bileti',sub:'Online bilet affiliate',link:'',icon:'🏛'},
+    'a-mr':  {title:'Ulaşım / Transfer',sub:'Transfer affiliate',link:'',icon:'🚌'},
+    'a-bot': {title:'Etkinlik / Aktivite',sub:'Affiliate linkinizi ekleyin',link:'',icon:'🎪'},
+    'r-top': {title:'Yemek & İçecek',sub:'Affiliate linkinizi ekleyin',link:'',icon:'🍽'},
+    'r-ml':  {title:'Ürün / Hizmet',sub:'Açıklama',link:'',icon:'🧴'},
+    'r-mr':  {title:'Ürün / Hizmet',sub:'Açıklama',link:'',icon:'🎁'},
+    'r-bot': {title:'Özel Teklif',sub:'Açıklama',link:'',icon:'🛍'}
+  },
+  menu:[
+    {cat:'Mantı Çeşitleri'},
+    {name:'Kayseri Mantısı',desc:'El açması, sarımsaklı yoğurt, kırmızı biber tereyağı',price:'180'},
+    {name:'Sulu Mantı',desc:'Et suyunda pişirilmiş, yoğurt, kuru nane, pul biber',price:'160'},
+    {name:'Çökelek Mantısı',desc:'Çökelek peyniri dolgulu, domates sosu, taze nane',price:'170'},
+    {name:'Ihlama Mantısı',desc:'Ispanaklı hamur, peynir dolgu, zeytinyağı sos',price:'185'},
+    {cat:'Çorbalar'},
+    {name:'Mercimek Çorbası',desc:'Kırmızı mercimek, limon, tereyağlı biber',price:'80'},
+    {name:'Yayla Çorbası',desc:'Yoğurt, pirinç, nane — Anadolu tarifi',price:'85'},
+    {cat:'Mezeler & Salatalar'},
+    {name:'Cacık',desc:'Süzme yoğurt, salatalık, sarımsak, dereotu',price:'65'},
+    {name:'Acılı Ezme',desc:'Domates, biber, soğan, maydanoz — ev yapımı',price:'60'},
+    {name:'Çoban Salatası',desc:'Taze domates, salatalık, biber, limon',price:'70'},
+    {cat:'İçecekler'},
+    {name:'Çay',desc:'',price:'25'},{name:'Türk Kahvesi',desc:'',price:'45'},
+    {name:'Ayran',desc:'',price:'35'},{name:'Limonata',desc:'',price:'55'},
+    {cat:'Tatlılar'},
+    {name:'Baklava',desc:'Fıstıklı, tereyağlı şerbetli, 2 dilim',price:'120'},
+    {name:'Sütlaç',desc:'Fırında pişirilmiş geleneksel pirinç sütlacı',price:'90'}
+  ]
+};
+
+/* ══ AUTH ══ */
+function getPW(){return localStorage.getItem('kk_admin_pw')||'admin123';}
+function doLogin(){
+  if(document.getElementById('pw-input').value===getPW()){
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('admin-shell').style.display='block';
+    initAll();
+  } else {
+    document.getElementById('login-err').style.display='block';
+    document.getElementById('pw-input').value='';
+  }
+}
+function doLogout(){
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('admin-shell').style.display='none';
+  document.getElementById('pw-input').value='';
+}
+function changePassword(){
+  const c=gv('pw-current'),n=gv('pw-new'),cf=gv('pw-confirm'),m=document.getElementById('pw-msg');
+  if(c!==getPW()){m.style.color='var(--red)';m.textContent='❌ Mevcut şifre hatalı.';return;}
+  if(n.length<6){m.style.color='var(--red)';m.textContent='❌ Min. 6 karakter.';return;}
+  if(n!==cf){m.style.color='var(--red)';m.textContent='❌ Şifreler eşleşmiyor.';return;}
+  localStorage.setItem('kk_admin_pw',n);
+  m.style.color='var(--teal)';m.textContent='✓ Değiştirildi!';
+  ['pw-current','pw-new','pw-confirm'].forEach(id=>sv(id,''));
+}
+
+/* ══ TABS ══ */
+function setTab(t,btn){
+  document.querySelectorAll('.tab-content').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+  btn.classList.add('active');
+}
+
+/* ══ HELPERS ══ */
+const gv=id=>document.getElementById(id)?.value??'';
+const sv=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v;};
+function getData(){return JSON.parse(localStorage.getItem('kk_settings')||'{}');}
+function mergeD(d){return Object.assign({},D,d);}
+
+/* ══ FEAT CARDS ══ */
+const FEAT_ICONS=['🛏','🍳','📶','🧺'];
+function buildFeatCards(cards){
+  const w=document.getElementById('feat-cards-wrap');
+  w.innerHTML='';
+  cards.forEach((c,i)=>{
+    w.innerHTML+=`<div class="rep-item">
+      <div class="rep-item-head"><div class="rep-num">${i+1}</div><div class="rep-label">${c.title||'Özellik '+(i+1)}</div></div>
+      <div class="field-row">
+        <div class="field"><label>İkon</label><input id="fc-icon-${i}" value="${c.icon||FEAT_ICONS[i]||'⭐'}" style="font-size:20px;text-align:center;" maxlength="4"></div>
+        <div class="field"><label>Başlık</label><input id="fc-title-${i}" value="${c.title||''}"></div>
+      </div>
+      <div class="field"><label>İçerik</label><textarea id="fc-body-${i}">${c.body||''}</textarea></div>
+    </div>`;
+  });
+}
+
+/* ══ RULES ══ */
+function buildRules(rules){
+  const w=document.getElementById('rules-wrap');w.innerHTML='';
+  rules.forEach((r,i)=>addRuleItem(i,r));
+}
+function addRuleItem(i,val=''){
+  const w=document.getElementById('rules-wrap');
+  const d=document.createElement('div');d.className='rep-item';d.id=`rule-item-${i}`;
+  d.innerHTML=`<div class="rep-item-head">
+    <div class="rep-num">${i+1}</div>
+    <div class="rep-label">Kural ${i+1}</div>
+    <button class="rep-del" onclick="delItem('rules-wrap','rule-item-${i}',reindexRules)">Sil</button>
+  </div>
+  <div class="field"><textarea id="rule-text-${i}">${val}</textarea></div>`;
+  w.appendChild(d);
+}
+function addRule(){
+  const w=document.getElementById('rules-wrap');
+  addRuleItem(w.children.length,'');
+}
+function reindexRules(){
+  document.querySelectorAll('#rules-wrap .rep-item').forEach((el,i)=>{
+    el.id=`rule-item-${i}`;
+    el.querySelector('.rep-num').textContent=i+1;
+    el.querySelector('.rep-label').textContent=`Kural ${i+1}`;
+    const ta=el.querySelector('textarea');if(ta)ta.id=`rule-text-${i}`;
+    el.querySelector('.rep-del').setAttribute('onclick',`delItem('rules-wrap','rule-item-${i}',reindexRules)`);
+  });
+}
+function collectRules(){
+  return Array.from(document.querySelectorAll('#rules-wrap textarea')).map(t=>t.value).filter(v=>v.trim());
+}
+
+/* ══ PLACES ══ */
+function buildPlaces(places){
+  const w=document.getElementById('places-wrap');w.innerHTML='';
+  places.forEach((p,i)=>addPlaceItem(i,p));
+}
+function addPlaceItem(i,p={}){
+  const w=document.getElementById('places-wrap');
+  const d=document.createElement('div');d.className='rep-item';d.id=`place-item-${i}`;
+  d.innerHTML=`<div class="rep-item-head">
+    <div class="rep-num">${i+1}</div>
+    <div class="rep-label">${p.name||'Yer '+(i+1)}</div>
+    <button class="rep-del" onclick="delItem('places-wrap','place-item-${i}',reindexPlaces)">Sil</button>
+  </div>
+  <div class="field-row">
+    <div class="field"><label>Mesafe</label><input id="pl-dist-${i}" value="${p.dist||'~? dk'}" placeholder="~10 dk"></div>
+    <div class="field"><label>İsim</label><input id="pl-name-${i}" value="${p.name||''}" placeholder="Kapalı Çarşı"></div>
+  </div>
+  <div class="field"><label>Açıklama</label><textarea id="pl-desc-${i}">${p.desc||''}</textarea></div>`;
+  w.appendChild(d);
+}
+function addPlace(){const w=document.getElementById('places-wrap');addPlaceItem(w.children.length);}
+function reindexPlaces(){
+  document.querySelectorAll('#places-wrap .rep-item').forEach((el,i)=>{
+    el.id=`place-item-${i}`;
+    el.querySelector('.rep-num').textContent=i+1;
+    ['dist','name','desc'].forEach(f=>{const e=el.querySelector(`[id^="pl-${f}-"]`);if(e)e.id=`pl-${f}-${i}`;});
+    el.querySelector('.rep-del').setAttribute('onclick',`delItem('places-wrap','place-item-${i}',reindexPlaces)`);
+  });
+}
+function collectPlaces(){
+  return Array.from(document.querySelectorAll('#places-wrap .rep-item')).map((el,i)=>({
+    dist:gv(`pl-dist-${i}`), name:gv(`pl-name-${i}`), desc:gv(`pl-desc-${i}`)
+  }));
+}
+
+/* ══ METRO / AIRPORT ══ */
+function buildTransport(items, wrapId, prefix, reindexFn){
+  const w=document.getElementById(wrapId);w.innerHTML='';
+  items.forEach((it,i)=>addTransportItem(i,it,wrapId,prefix,reindexFn));
+}
+function addTransportItem(i,it={},wrapId,prefix,reindexFn){
+  const w=document.getElementById(wrapId);
+  const d=document.createElement('div');d.className='rep-item';d.id=`${prefix}-item-${i}`;
+  d.innerHTML=`<div class="rep-item-head">
+    <div class="rep-num">${i+1}</div>
+    <div class="rep-label">${it.label||'Satır '+(i+1)}</div>
+    <button class="rep-del" onclick="delItem('${wrapId}','${prefix}-item-${i}',${reindexFn})">Sil</button>
+  </div>
+  <div class="field-row">
+    <div class="field"><label>İstasyon / Havalimanı</label><input id="${prefix}-lbl-${i}" value="${it.label||''}" placeholder="Laleli Durağı"></div>
+    <div class="field"><label>Süre / Mesafe</label><input id="${prefix}-val-${i}" value="${it.val||''}" placeholder="2 dk"></div>
+  </div>`;
+  w.appendChild(d);
+}
+function addMetro(){const w=document.getElementById('metro-wrap');addTransportItem(w.children.length,{},`metro-wrap`,'metro','reindexMetro');}
+function addAirport(){const w=document.getElementById('airport-wrap');addTransportItem(w.children.length,{},`airport-wrap`,'airport','reindexAirport');}
+function reindexMetro(){reindexTransport('metro-wrap','metro','reindexMetro');}
+function reindexAirport(){reindexTransport('airport-wrap','airport','reindexAirport');}
+function reindexTransport(wrapId,prefix,fn){
+  document.querySelectorAll(`#${wrapId} .rep-item`).forEach((el,i)=>{
+    el.id=`${prefix}-item-${i}`;
+    el.querySelector('.rep-num').textContent=i+1;
+    ['lbl','val'].forEach(f=>{const e=el.querySelector(`[id^="${prefix}-${f}-"]`);if(e)e.id=`${prefix}-${f}-${i}`;});
+    el.querySelector('.rep-del').setAttribute('onclick',`delItem('${wrapId}','${prefix}-item-${i}',${fn})`);
+  });
+}
+function collectTransport(wrapId,prefix){
+  return Array.from(document.querySelectorAll(`#${wrapId} .rep-item`)).map((el,i)=>({
+    label:gv(`${prefix}-lbl-${i}`), val:gv(`${prefix}-val-${i}`)
+  }));
+}
+
+/* ══ GENERIC DELETE ══ */
+function delItem(wrapId, itemId, reindexFn){
+  if(!confirm('Bu öğeyi silmek istediğinize emin misiniz?')) return;
+  document.getElementById(itemId)?.remove();
+  reindexFn();
+}
+
+/* ══ ADS ══ */
+const AD_ZONES = {
+  home:[
+    {key:'h-top',label:'Üst Banner'},
+    {key:'h-ml', label:'Orta Kart — Sol'},
+    {key:'h-mr', label:'Orta Kart — Sağ'},
+    {key:'h-bot',label:'Alt Banner'}
+  ],
+  area:[
+    {key:'a-top',label:'Üst Banner'},
+    {key:'a-ml', label:'Orta Kart — Sol'},
+    {key:'a-mr', label:'Orta Kart — Sağ'},
+    {key:'a-bot',label:'Alt Banner'}
+  ],
+  rest:[
+    {key:'r-top',label:'Üst Banner'},
+    {key:'r-ml', label:'Orta Kart — Sol'},
+    {key:'r-mr', label:'Orta Kart — Sağ'},
+    {key:'r-bot',label:'Alt Banner'}
+  ]
+};
+function buildAds(ads){
+  ['home','area','rest'].forEach(page=>{
+    const w=document.getElementById(`ads-${page}-wrap`);
+    w.innerHTML='';
+    AD_ZONES[page].forEach(zone=>{
+      const a=ads[zone.key]||D.ads[zone.key]||{};
+      w.innerHTML+=`<div class="ad-zone-card">
+        <div class="ad-zone-label">${zone.label}</div>
+        <div class="field"><label>Başlık</label><input id="ad-${zone.key}-title" value="${a.title||''}"></div>
+        <div class="field"><label>Alt yazı</label><input id="ad-${zone.key}-sub" value="${a.sub||''}"></div>
+        <div class="field"><label>Link (Affiliate URL)</label><input id="ad-${zone.key}-link" value="${a.link||''}" placeholder="https://..."></div>
+        <div class="field"><label>İkon</label>
+          <div class="icon-pick-wrap">
+            <div class="icon-preview" id="ad-${zone.key}-icon-prev">${a.icon||'🎯'}</div>
+            <input class="icon-input" id="ad-${zone.key}-icon" value="${a.icon||'🎯'}" oninput="document.getElementById('ad-${zone.key}-icon-prev').textContent=this.value" maxlength="4">
+          </div>
+        </div>
+      </div>`;
+    });
+  });
+}
+function collectAds(){
+  const ads={};
+  ['home','area','rest'].forEach(page=>{
+    AD_ZONES[page].forEach(zone=>{
+      ads[zone.key]={
+        title:gv(`ad-${zone.key}-title`),
+        sub:gv(`ad-${zone.key}-sub`),
+        link:gv(`ad-${zone.key}-link`),
+        icon:gv(`ad-${zone.key}-icon`)
+      };
+    });
+  });
+  return ads;
+}
+
+/* ══ MENU TABLE ══ */
+function buildMenuTable(menuData){
+  const tbody=document.getElementById('menu-tbody');tbody.innerHTML='';
+  menuData.forEach((row,i)=>{
+    const tr=document.createElement('tr');
+    if(row.cat){
+      tr.className='menu-cat-row';
+      tr.innerHTML=`<td colspan="3">${row.cat}</td>`;
+    } else {
+      tr.innerHTML=`<td><input data-mi="${i}" data-f="name" value="${row.name||''}"></td>
+        <td><input data-mi="${i}" data-f="desc" value="${row.desc||''}"></td>
+        <td><input data-mi="${i}" data-f="price" value="${row.price||''}" type="number" min="0"></td>`;
+    }
+    tbody.appendChild(tr);
+  });
+}
+function collectMenu(){
+  const menuData=JSON.parse(localStorage.getItem('kk_menu')||JSON.stringify(D.menu));
+  document.querySelectorAll('#menu-tbody input').forEach(inp=>{
+    const i=parseInt(inp.dataset.mi),f=inp.dataset.f;
+    if(!isNaN(i)&&menuData[i])menuData[i][f]=inp.value;
+  });
+  return menuData;
+}
+
+/* ══ PHOTOS ══ */
+let photoData={};
+let photoCount=6;
+function buildPhotoGrid(savedPhotos, count){
+  photoData=savedPhotos||{};
+  photoCount=count||6;
+  const g=document.getElementById('photo-grid');g.innerHTML='';
+  for(let i=0;i<photoCount;i++){
+    const slot=document.createElement('div');
+    slot.className='photo-slot';slot.id=`pslot-${i}`;
+    slot.onclick=(e)=>{if(e.target.classList.contains('ps-del'))return;uploadPhoto(i);};
+    const img=document.createElement('img');img.id=`pimg-${i}`;img.alt='';
+    if(photoData[i]){img.src=photoData[i];img.style.display='block';}
+    const ph=document.createElement('div');
+    ph.innerHTML=`<div class="ps-icon">📷</div><div class="ps-num">${i+1}. Fotoğraf</div>`;
+    const del=document.createElement('button');
+    del.className='ps-del';del.textContent='✕';
+    del.onclick=e=>{e.stopPropagation();clearPhoto(i);};
+    slot.appendChild(img);slot.appendChild(ph);slot.appendChild(del);
+    g.appendChild(slot);
+  }
+}
+function addPhotoSlot(){
+  photoCount++;
+  buildPhotoGrid(photoData,photoCount);
+}
+function uploadPhoto(i){
+  const inp=document.createElement('input');inp.type='file';inp.accept='image/*';
+  inp.onchange=e=>{
+    const f=e.target.files[0];if(!f)return;
+    const r=new FileReader();
+    r.onload=ev=>{
+      photoData[i]=ev.target.result;
+      const img=document.getElementById(`pimg-${i}`);
+      if(img){img.src=ev.target.result;img.style.display='block';}
+      const slot=document.getElementById(`pslot-${i}`);
+      if(slot){const ph=slot.querySelector('div');if(ph)ph.style.display='none';}
+    };
+    r.readAsDataURL(f);
+  };
+  inp.click();
+}
+function clearPhoto(i){
+  delete photoData[i];
+  const img=document.getElementById(`pimg-${i}`);
+  if(img){img.src='';img.style.display='none';}
+  const slot=document.getElementById(`pslot-${i}`);
+  if(slot){const ph=slot.querySelector('div');if(ph)ph.style.display='';}
+}
+
+/* ══ LOGOS ══ */
+function uploadLogo(type){
+  const inp=document.createElement('input');inp.type='file';inp.accept='image/*';
+  inp.onchange=e=>{
+    const f=e.target.files[0];if(!f)return;
+    const r=new FileReader();
+    r.onload=ev=>{
+      const img=document.getElementById(`${type}-logo-img`);
+      const ph=document.getElementById(`${type}-logo-ph`);
+      if(img){img.src=ev.target.result;img.style.display='block';}
+      if(ph)ph.style.display='none';
+      // save
+      const d=getData();
+      if(type==='homes')d.homesLogo=ev.target.result;
+      else d.restLogo=ev.target.result;
+      localStorage.setItem('kk_settings',JSON.stringify(d));
+      flashSave();
+    };
+    r.readAsDataURL(f);
+  };
+  inp.click();
+}
+function clearLogo(type){
+  const img=document.getElementById(`${type}-logo-img`);
+  const ph=document.getElementById(`${type}-logo-ph`);
+  if(img){img.src='';img.style.display='none';}
+  if(ph)ph.style.display='';
+  const d=getData();
+  if(type==='homes')delete d.homesLogo;
+  else delete d.restLogo;
+  localStorage.setItem('kk_settings',JSON.stringify(d));
+}
+function loadLogos(d){
+  if(d.homesLogo){
+    const img=document.getElementById('homes-logo-img');
+    const ph=document.getElementById('homes-logo-ph');
+    if(img){img.src=d.homesLogo;img.style.display='block';}
+    if(ph)ph.style.display='none';
+  }
+  if(d.restLogo){
+    const img=document.getElementById('rest-logo-img');
+    const ph=document.getElementById('rest-logo-ph');
+    if(img){img.src=d.restLogo;img.style.display='block';}
+    if(ph)ph.style.display='none';
+  }
+}
+
+/* ══ SAVE / LOAD ══ */
+const ABOUT_FIELDS=[['p1-name','p1_name'],['p1-role','p1_role'],['p1-bio','p1_bio'],['p1-ig','p1_ig'],['p1-wa','p1_wa'],];
+const SIMPLE_FIELDS=[
+  ['f-phone','phone'],['f-addr','addr'],['f-wifi','wifi'],
+  ['f-ci-start','ciStart'],['f-ci-end','ciEnd'],['f-co','co'],
+  ['f-rest-phone','restPhone'],['f-rest-addr','restAddr'],
+  ['f-rest-open','restOpen'],['f-rest-close','restClose'],
+  ['f-offer-title','offerTitle'],['f-offer-body','offerBody'],
+  ['f-map-lat','mapLat'],['f-map-lng','mapLng'],['f-maps-home','mapsHome'],['f-maps-rest','mapsRest'],
+  ['f-ig-home','igHome'],['f-ig-rest','igRest'],
+  ['f-menu-url','menuUrl'],
+  ['c-hero-eyebrow','heroEyebrow'],['c-hero-sub','heroSub'],
+  ['c-chip1','chip1'],['c-chip2','chip2'],['c-chip3','chip3'],
+  ['c-apt-title','aptTitle'],['c-apt-desc','aptDesc'],
+  ['c-rest-about-title','restAboutTitle'],['c-rest-about-desc','restAboutDesc'],
+  ['c-rest-badge','restBadge'],['c-rest-sub','restSub']
+];
+
+function saveAll(){
+  const d=getData();
+  SIMPLE_FIELDS.forEach(([id,key])=>{const e=document.getElementById(id);if(e)d[key]=e.value;});
+  // feat cards
+  d.featCards=[0,1,2,3].map(i=>({icon:gv(`fc-icon-${i}`),title:gv(`fc-title-${i}`),body:gv(`fc-body-${i}`)}));
+  d.rules=collectRules();
+  d.places=collectPlaces();
+  d.metro=collectTransport('metro-wrap','metro');
+  d.airport=collectTransport('airport-wrap','airport');
+  d.ads=collectAds();
+  d.menu=collectMenu();
+  d.photos=photoData;
+  d.photoCount=photoCount;
+  // about
+  const about={};
+  ABOUT_FIELDS.forEach(([id,key])=>about[key]=gv(id));
+  about.values=collectValues();
+  d.about=about;
+  localStorage.setItem('kk_settings',JSON.stringify(d));
+  localStorage.setItem('kk_menu',JSON.stringify(d.menu));
+  flashSave();
+}
+
+function loadAll(){
+  const raw=localStorage.getItem('kk_settings');
+  const saved=raw?JSON.parse(raw):{};
+  const d=mergeD(saved);
+
+  SIMPLE_FIELDS.forEach(([id,key])=>sv(id, d[key]!==undefined?d[key]:D[key]||''));
+  buildFeatCards(d.featCards||D.featCards);
+  buildRules(d.rules||D.rules);
+  buildPlaces(d.places||D.places);
+  buildTransport(d.metro||D.metro,'metro-wrap','metro','reindexMetro');
+  buildTransport(d.airport||D.airport,'airport-wrap','airport','reindexAirport');
+  buildAds(d.ads||D.ads);
+  buildMenuTable(d.menu||D.menu);
+  buildPhotoGrid(d.photos||{}, d.photoCount||6);
+  loadLogos(d);
+  // about
+  const ab=d.about||{};
+  ABOUT_FIELDS.forEach(([id,key])=>sv(id,ab[key]||''));
+  buildValues(ab.values);
+  // person photos
+  [1,2].forEach(n=>{
+    if(d['personPhoto'+n]){
+      const img=document.getElementById('p'+n+'-photo-img');
+      const ph=document.getElementById('p'+n+'-photo-ph');
+      if(img){img.src=d['personPhoto'+n];img.style.display='block';}
+      if(ph)ph.style.display='none';
+    }
+  });
+}
+
+function initAll(){loadAll();}
+
+function resetAll(){
+  if(!confirm('Tüm ayarlar sıfırlanacak. Emin misiniz?'))return;
+  localStorage.removeItem('kk_settings');
+  localStorage.removeItem('kk_menu');
+  loadAll();
+  const b=document.getElementById('save-badge');
+  b.textContent='↺ Sıfırlandı';b.style.display='block';
+  setTimeout(()=>{b.style.display='none';b.textContent='✓ Kaydedildi!';},2200);
+}
+
+function flashSave(){
+  const b=document.getElementById('save-badge');
+  b.textContent='✓ Kaydedildi!';b.style.display='block';
+  setTimeout(()=>b.style.display='none',2500);
+}
+
+
+/* ── PERSON PHOTOS (admin) ── */
+function uploadPersonAdminPhoto(num){
+  const inp=document.createElement('input');inp.type='file';inp.accept='image/*';
+  inp.onchange=e=>{
+    const f=e.target.files[0];if(!f)return;
+    const r=new FileReader();
+    r.onload=ev=>{
+      const img=document.getElementById('p'+num+'-photo-img');
+      const ph=document.getElementById('p'+num+'-photo-ph');
+      if(img){img.src=ev.target.result;img.style.display='block';}
+      if(ph)ph.style.display='none';
+      const d=getData();
+      d['personPhoto'+num]=ev.target.result;
+      localStorage.setItem('kk_settings',JSON.stringify(d));
+      flashSave();
+    };
+    r.readAsDataURL(f);
+  };
+  inp.click();
+}
+function clearPersonPhoto(num){
+  const img=document.getElementById('p'+num+'-photo-img');
+  const ph=document.getElementById('p'+num+'-photo-ph');
+  if(img){img.src='';img.style.display='none';}
+  if(ph)ph.style.display='';
+  const d=getData();
+  delete d['personPhoto'+num];
+  localStorage.setItem('kk_settings',JSON.stringify(d));
+}
+
+/* ── VALUES ── */
+const DEFAULT_VALUES=[
+  {icon:'❤️',title:'Samimi Misafirperverlik',text:'Her misafirimize evimizin sıcaklığını hissettiriyoruz.'},
+  {icon:'✨',title:'Kalite & Temizlik',text:'Dairemiz her konuktan önce özenle hazırlanır.'},
+  {icon:'📍',title:'Mükemmel Konum',text:'Tarihin kalbinde, her şeye yürüme mesafesinde.'},
+  {icon:'🤝',title:'7/24 Destek',text:'İhtiyacınızda her zaman yanınızdayız.'}
+];
+function buildValues(vals){
+  const w=document.getElementById('values-wrap');if(!w)return;
+  w.innerHTML='';
+  (vals||DEFAULT_VALUES).forEach((v,i)=>{
+    w.innerHTML+=`<div class="rep-item" style="margin-bottom:10px;">
+      <div class="rep-item-head"><div class="rep-num">${i+1}</div><div class="rep-label">${v.title||'Değer '+(i+1)}</div></div>
+      <div class="field-row">
+        <div class="field"><label>İkon</label><input id="val-icon-${i}" value="${v.icon||'⭐'}" style="font-size:18px;text-align:center;" maxlength="4"></div>
+        <div class="field"><label>Başlık</label><input id="val-title-${i}" value="${v.title||''}"></div>
+      </div>
+      <div class="field"><label>Açıklama</label><input id="val-text-${i}" value="${v.text||''}"></div>
+    </div>`;
+  });
+}
+function collectValues(){
+  return [0,1,2,3].map(i=>({
+    icon:gv('val-icon-'+i),title:gv('val-title-'+i),text:gv('val-text-'+i)
+  }));
+}
+
+document.getElementById('pw-input').addEventListener('keydown',e=>{if(e.key==='Enter')adm_doLogin();});
+
+window.adm_doLogin=doLogin;window.adm_doLogout=doLogout;window.adm_saveAll=saveAll;
+window.adm_changePassword=changePassword;window.adm_resetAll=resetAll;
+window.adm_setTab=function(t,btn){
+  document.querySelectorAll('#admin-overlay .tab-content').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('#admin-overlay .tab-btn').forEach(x=>x.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+  if(btn)btn.classList.add('active');
+};
+window.adm_addRule=addRule;window.adm_addPlace=addPlace;window.adm_addMetro=addMetro;
+window.adm_addAirport=addAirport;window.adm_addPhotoSlot=addPhotoSlot;
+window.adm_uploadLogo=uploadLogo;window.adm_clearLogo=clearLogo;
+window.adm_uploadPersonAdminPhoto=uploadPersonAdminPhoto;
+window.adm_clearPersonPhoto=clearPersonPhoto;window.adm_initAll=initAll;
+})();
+function startAdminHold(e){if(e)e.preventDefault();document.getElementById('admin-hold-bar').style.display='block';window._aHold=setTimeout(()=>{document.getElementById('admin-hold-bar').style.display='none';openAdmin();},1500);}
+function cancelAdminHold(){clearTimeout(window._aHold);document.getElementById('admin-hold-bar').style.display='none';}
+function openAdmin(){document.getElementById('admin-overlay').classList.add('open');document.body.style.overflow='hidden';if(window.adm_initAll)window.adm_initAll();}
+function closeAdmin(){document.getElementById('admin-overlay').classList.remove('open');document.body.style.overflow='';}
+
+</script>
+
+</body>
+</html>
